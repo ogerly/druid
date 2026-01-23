@@ -1,30 +1,40 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div id="app-container">
+    <TheNavbar @toggle-sidebar="toggleSidebar" />
+    <TheSidebar :is-open="isSidebarOpen" @close="closeSidebar" />
+    <main class="main-content">
+      <MapView />
+    </main>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
+<script setup>
+import { ref } from 'vue';
+import TheNavbar from './components/layout/TheNavbar.vue';
+import TheSidebar from './components/layout/TheSidebar.vue';
+import MapView from './components/MapView.vue';
+
+const isSidebarOpen = ref(false);
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+const closeSidebar = () => {
+  isSidebarOpen.value = false;
+};
+</script>
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+#app-container {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.main-content {
+  /* The map needs to fill the entire space, and the navbar sits on top */
+  height: 100%;
+  width: 100%;
 }
 </style>
