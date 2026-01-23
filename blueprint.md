@@ -1,40 +1,42 @@
-# Blueprint: DRUID App
+# Blueprint: DRUID Application
 
-## 1. Vision & Markenkern
+## 1. Overview
 
-DRUID ist eine Webanwendung, die archäologische Daten mit moderner Naturspiritualität und einem historisch-astronomischen Kalendersystem verbindet. Das Alleinstellungsmerkmal ist das **Evidenz-Labeling-System**, das zwischen wissenschaftlichen Fakten und subjektiven Erfahrungen unterscheidet.
+DRUID is a mobile-first web application designed for users to discover and explore Celtic and pre-Christian historical sites. It features an interactive map as its core, allowing users to record their own paths, discover Points of Interest (POIs), and immerse themselves in history and nature. The project is built with Vue.js 3, Vite, and Leaflet.
 
-## 2. Aktueller Fokus: MVP-Entwicklung
+## 2. Design & Features Implemented
 
-Wir beginnen mit der Entwicklung des **Minimum Viable Product (MVP)**, das sich auf die folgenden Kernfunktionen konzentriert:
+This section documents the project's features and design from the initial version to the current one.
 
-- **Interaktive Karte:** Eine Leaflet-basierte Karte zur Darstellung von POIs.
-- **GPS-Funktionalität:** Setzen von Markern und Aufzeichnen von Wegen.
-- **Offline-Fähigkeit:** Grundlegende Offline-Unterstützung wird von Anfang an mitgedacht.
+### Version 1 (Initial Setup)
 
-## 3. Dateistruktur
+*   **Core Map Functionality:**
+    *   Interactive map using Leaflet.js (`vue-leaflet`).
+    *   Users can place markers by clicking on the map.
+*   **Geolocation:**
+    *   "Center on Me" button to find and center the map on the user's current location.
+*   **Path Recording:**
+    *   "Start/Stop Recording" button to draw a polyline path on the map by clicking.
+    *   "Clear Path" button to remove the recorded path.
+*   **Composable Logic:**
+    *   Extracted map-related logic into a `useMap.js` composable for better organization and reusability.
 
-```
-/src
-|-- /assets
-|-- /components
-|   |-- MapView.vue
-|-- /composables
-|   |-- useMap.js
-|-- /stores
-|-- /views
-|-- App.vue
-|-- main.ts
-|-- style.css
-```
+### Version 2 (Layout & UI Refinement)
 
-## 4. Geplante Schritte
+*   **Git Repository:**
+    *   Initialized a local Git repository.
+    *   Connected and pushed the initial project to the `ogerly/druid` GitHub repository.
+    *   Created a comprehensive `README.md` file outlining the project's vision and technical details.
+*   **Mobile-First Layout:**
+    *   Implemented a responsive, mobile-first layout structure.
+    *   **`TheNavbar.vue`:** A fixed navigation bar at the top of the screen.
+    *   **`TheSidebar.vue`:** A dynamic, slide-in sidebar for navigation, controlled by a hamburger icon in the navbar.
+    *   **`App.vue` Refactor:** The main component was updated to orchestrate the new layout, managing the sidebar's open/closed state.
+*   **UI/UX Improvements:**
+    *   **Centralized Controls:** Moved the map action buttons ("Center on Me", "Record", "Clear") from the map overlay into `TheNavbar.vue` as intuitive icon buttons.
+    *   **Visual Feedback:** The record button in the navbar now visually indicates the `isRecording` state (e.g., turns red).
+    *   **CSS Fix:** Corrected a `box-sizing` issue in the navbar to prevent it from overflowing the screen width, ensuring all controls are visible.
 
-1. **Grundstruktur anlegen:** Erstellen der oben genannten Ordner und Dateien. (erledigt)
-2. **Abhängigkeiten installieren:** Hinzufügen von `leaflet` und `@vue-leaflet/vue-leaflet`. (erledigt)
-3. **Karten-Komponente erstellen:** Entwickeln einer `MapView.vue`-Komponente. (erledigt)
-4. **Karten-Logik auslagern:** Erstellen eines `useMap.js`-Composables. (erledigt)
-5. **Integration:** Einbinden der `MapView` in die `App.vue`. (erledigt)
-6. **GPS-Zentrierung:** Button und Logik zum Zentrieren der Karte auf die aktuelle Benutzerposition hinzugefügt. (erledigt)
-7. **Marker setzen:** Manuelles Setzen von Markern per Klick auf die Karte ermöglicht. (erledigt)
-8. **Wegaufzeichnung:** Implementieren der Funktion zum Aufzeichnen und Anzeigen von Wegen.
+## 3. Current Plan
+
+*There are no active development tasks. The project is in a stable state, awaiting the next set of feature requests.*
