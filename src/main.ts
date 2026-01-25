@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import router from './router' // Import router
 
 // Import Leaflet CSS globally
 import 'leaflet/dist/leaflet.css';
@@ -17,4 +18,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl,
 });
 
-createApp(App).mount('#app')
+const app = createApp(App);
+app.use(router); // Use router
+app.mount('#app');
