@@ -1,0 +1,1 @@
+import{_ as t,o as s,c as o,a}from"./index-B1yLvHsM.js";const l={class:"view-container"},r={__name:"CalendarView",setup(n){return(c,e)=>(s(),o("div",l,[...e[0]||(e[0]=[a("h1",null,"Wheel of the Year",-1),a("p",null,"This page will visualize the Celtic Wheel of the Year.",-1)])]))}},_=t(r,[["__scopeId","data-v-768a5ff2"]]);export{_ as default};

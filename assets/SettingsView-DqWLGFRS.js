@@ -1,0 +1,1 @@
+import{_ as s,o as n,c as a,a as t}from"./index-B1yLvHsM.js";const o={class:"view-container"},i={__name:"SettingsView",setup(c){return(r,e)=>(n(),a("div",o,[...e[0]||(e[0]=[t("h1",null,"Settings",-1),t("p",null,"Application settings will be managed here.",-1)])]))}},l=s(i,[["__scopeId","data-v-461974e7"]]);export{l as default};

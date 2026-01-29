@@ -1,0 +1,1 @@
+import{_ as t,o as a,c as o,a as s}from"./index-B1yLvHsM.js";const r={class:"view-container"},i={__name:"ProfileView",setup(l){return(c,e)=>(a(),o("div",r,[...e[0]||(e[0]=[s("h1",null,"User Profile",-1),s("p",null,"Here, users will see their saved paths and visited places.",-1)])]))}},_=t(i,[["__scopeId","data-v-16c07178"]]);export{_ as default};
