@@ -40,9 +40,9 @@ const icons = {
 
 export const usePoisStore = defineStore('pois', () => {
   const pois = ref<POI[]>([
-    { id: 1, name: 'Historic Museum', description: 'A museum of local history.', coordinates: [51.51, -0.1], category: 'culture' },
-    { id: 2, name: 'City Park', description: 'A large urban park.', coordinates: [51.505, -0.09], category: 'nature' },
-    { id: 3, name: 'Famous Restaurant', description: 'Known for its exquisite cuisine.', coordinates: [51.515, -0.08], category: 'food' },
+    { id: 1, name: 'Keltenwelt am Glauberg', description: 'Keltisches Fürstengrab und Museum', coordinates: [50.3030, 8.9110], category: 'culture' },
+    { id: 2, name: 'Externsteine', description: 'Markante Felsformation mit historischer Bedeutung', coordinates: [51.8672, 8.9172], category: 'nature' },
+    { id: 3, name: 'Heuneburg', description: 'Rekonstruierte keltische Siedlung', coordinates: [48.0567, 9.3117], category: 'culture' },
   ]);
 
   let nextId = 4; // Start after the initial POIs
