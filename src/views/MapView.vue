@@ -195,14 +195,20 @@ html, body {
 }
 
 /* Mobile-spezifische Anpassungen */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .w-full.h-full {
-    height: 100%;
+    height: 100% !important;
+    width: 100% !important;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+  }
+  
+  :deep(.leaflet-container) {
+    height: 100% !important;
+    width: 100% !important;
   }
   
   :deep(.leaflet-control-zoom) {

@@ -116,13 +116,20 @@ body {
 
 /* Main Content Layout */
 main {
-  height: calc(100vh - 4rem); /* Platz für Bottom Nav */
+  height: 100vh;
   overflow: hidden;
 }
 
-/* Auf Map-Route mit Navbar */
-main:has(+ .btm-nav) {
-  height: calc(100vh - 4rem);
+/* Auf Mobile mit Bottom Nav und Navbar */
+@media (max-width: 1023px) {
+  main {
+    height: calc(100vh - 4rem); /* Bottom Nav Höhe */
+  }
+  
+  /* Wenn Navbar sichtbar (Map-Route) */
+  .navbar + main {
+    height: calc(100vh - 4rem - 4rem); /* Navbar + Bottom Nav */
+  }
 }
 
 @media (min-width: 1024px) {
