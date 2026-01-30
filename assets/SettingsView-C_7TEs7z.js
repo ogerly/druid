@@ -1,1 +1,0 @@
-import{q as s,g as n,y as t}from"./index-D23fe2f2.js";const o={class:"p-8"},r={__name:"SettingsView",setup(i){return(a,e)=>(s(),n("div",o,[...e[0]||(e[0]=[t("h1",{class:"text-2xl font-bold"},"Settings",-1),t("p",null,"This is where the application settings will be configured.",-1)])]))}};export{r as default};
