@@ -86,6 +86,16 @@ onMounted(() => {
       @update:zoom="mapStore.setZoom($event)"
       @update:center="mapStore.setCenter($event)"
       @click="onMapClick"
+      :options="{
+        touchZoom: true,
+        doubleClickZoom: true,
+        scrollWheelZoom: true,
+        tap: true,
+        tapTolerance: 15,
+        dragging: true,
+        zoomControl: true,
+        attributionControl: true
+      }"
       class="w-full h-full"
     >
       <l-tile-layer
@@ -157,5 +167,47 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Scoped styles for MapView */
+/* Mobile-First CSS */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.w-full.h-full {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  position: relative;
+  touch-action: pan-x pan-y;
+}
+
+/* Bessere Touch-Targets für Mobile */
+:deep(.leaflet-control-zoom a) {
+  min-width: 44px;
+  min-height: 44px;
+  line-height: 44px;
+}
+
+/* Popup Touch-Optimierung */
+:deep(.leaflet-popup-content) {
+  min-width: 200px;
+  font-size: 14px;
+}
+
+/* Mobile-spezifische Anpassungen */
+@media (max-width: 768px) {
+  .w-full.h-full {
+    height: calc(100vh - 4rem);
+    height: calc(100dvh - 4rem); /* Dynamic Viewport für Mobile */
+  }
+  
+  :deep(.leaflet-control-zoom) {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  
+  :deep(.leaflet-popup-content-wrapper) {
+    border-radius: 8px;
+  }
+}
 </style>

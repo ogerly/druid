@@ -53,6 +53,11 @@ export const useMapStore = defineStore('map', () => {
         },
         () => {
           reject(new Error('Unable to retrieve your location'));
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000, // 15 Sekunden für Mobile
+          maximumAge: 0
         }
       );
     });
