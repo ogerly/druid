@@ -51,7 +51,7 @@ export const useMapStore = defineStore('map', () => {
           zoom.value = 15;
           resolve();
         },
-        (error) => {
+        () => {
           reject(new Error('Unable to retrieve your location'));
         }
       );

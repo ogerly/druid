@@ -10,7 +10,8 @@ const mapStore = useMapStore();
 const router = useRouter();
 
 const showOnMap = (poi: POI) => {
-  mapStore.selectPoi(poi.id, poi.coordinates);
+  const coords = poi.coordinates as [number, number];
+  mapStore.selectPoi(String(poi.id), coords);
   router.push('/'); // Assuming '/' is the MapView
 };
 
@@ -45,7 +46,7 @@ const getCategoryClass = (category: POI['category']) => {
           <p class="text-sm opacity-70">{{ poi.description }}</p>
           
           <div class="text-xs opacity-50 mt-2">
-            📍 {{ poi.coordinates[0].toFixed(4) }}, {{ poi.coordinates[1].toFixed(4) }}
+            📍 {{ (poi.coordinates as [number, number])[0].toFixed(4) }}, {{ (poi.coordinates as [number, number])[1].toFixed(4) }}
           </div>
           
           <div class="card-actions justify-end mt-4">
