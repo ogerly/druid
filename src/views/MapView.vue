@@ -167,18 +167,22 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Mobile-First CSS */
-html, body {
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
-}
-
+/* Map Container */
 .w-full.h-full {
   width: 100%;
   height: 100%;
-  min-height: 400px;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   touch-action: pan-x pan-y;
+}
+
+/* Leaflet Container muss auch 100% sein */
+:deep(.leaflet-container) {
+  width: 100%;
+  height: 100%;
 }
 
 /* Bessere Touch-Targets für Mobile */
@@ -196,21 +200,6 @@ html, body {
 
 /* Mobile-spezifische Anpassungen */
 @media (max-width: 1023px) {
-  .w-full.h-full {
-    height: 100% !important;
-    width: 100% !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-  
-  :deep(.leaflet-container) {
-    height: 100% !important;
-    width: 100% !important;
-  }
-  
   :deep(.leaflet-control-zoom) {
     margin-top: 10px;
     margin-right: 10px;
@@ -218,12 +207,6 @@ html, body {
   
   :deep(.leaflet-popup-content-wrapper) {
     border-radius: 8px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .w-full.h-full {
-    height: 100vh;
   }
 }
 </style>

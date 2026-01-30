@@ -1,7 +1,7 @@
 <template>
-  <div class="drawer lg:drawer-open">
+  <div class="drawer lg:drawer-open app-container">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" v-model="isSidebarOpen" />
-    <div class="drawer-content flex flex-col">
+    <div class="drawer-content">
       <!-- Map Controls Navbar - nur auf Map-Route sichtbar -->
       <TheNavbar 
         v-if="isMapRoute"
@@ -9,13 +9,14 @@
         @toggle-recording="handleToggleRecording"
         @clear-path="handleClearPath"
         :is-recording="mapStore.isRecording"
+        class="navbar-mobile"
       />
-      <main class="flex-1 relative">
+      <main>
         <router-view />
       </main>
       
       <!-- Mobile Bottom Dock Navigation -->
-      <div class="btm-nav lg:hidden z-50">
+      <div class="btm-nav lg:hidden">
         <button 
           v-for="link in navLinks" 
           :key="link.name"
@@ -92,14 +93,40 @@ const handleClearPath = () => {
 </script>
 
 <style>
-body {
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  background-color: #1a1a1a;
+  padding: 0;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
 }
 
-/* Fixe z-index für Mobile */
+body {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  background-color: #1a1a1a;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+}
+
+.app-container {
+  height: 100%;
+  width: 100%;
+}
+
+.drawer-content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .drawer-side {
   z-index: 40;
 }
@@ -108,39 +135,39 @@ body {
   z-index: 39;
 }
 
-.btm-nav {
-  z-index: 50;
+/* Navbar */
+.navbar-mobile {
+  flex-shrink: 0;
   height: 4rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Main Content Layout */
+/* Main Content Area */
 main {
-  height: 100vh;
+  flex: 1;
   overflow: hidden;
+  position: relative;
+  width: 100%;
+  min-height: 0; /* Wichtig für flex-child */
 }
 
-/* Auf Mobile mit Bottom Nav und Navbar */
-@media (max-width: 1023px) {
-  main {
-    height: calc(100vh - 4rem); /* Bottom Nav Höhe */
-  }
-  
-  /* Wenn Navbar sichtbar (Map-Route) */
-  .navbar + main {
-    height: calc(100vh - 4rem - 4rem); /* Navbar + Bottom Nav */
-  }
-}
-
-@media (min-width: 1024px) {
-  main {
-    height: 100vh;
-  }
+/* Bottom Navigation */
+.btm-nav {
+  flex-shrink: 0;
+  height: 4rem;
+  z-index: 50;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Active Route Highlight */
 .btm-nav button.active {
   background-color: rgba(255, 255, 255, 0.1);
   color: var(--color-primary);
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .navbar-mobile {
+    display: none;
+  }
 }
 </style>
