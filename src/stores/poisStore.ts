@@ -1,13 +1,15 @@
-import { ref } from 'vue';
+
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
 import L from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
 
 // Define the POI type
-interface POI {
+export interface POI {
   id: number;
   name: string;
   description: string;
-  coords: LatLngExpression;
+  coordinates: LatLngExpression;
   category: 'culture' | 'nature' | 'food';
 }
 
@@ -15,7 +17,7 @@ interface POI {
 const categoryColors: Record<POI['category'], string> = {
   culture: 'blue',
   nature: 'green',
-  food: 'orange', 
+  food: 'orange',
 };
 
 // Create custom icons
@@ -36,12 +38,16 @@ const icons = {
   orange: createIcon('orange'),
 };
 
-export function usePois() {
+export const usePoisStore = defineStore('pois', () => {
   const pois = ref<POI[]>([
-    { id: 1, name: 'Historic Museum', description: 'A museum of local history.', coords: [51.51, -0.1], category: 'culture' },
-    { id: 2, name: 'City Park', description: 'A large urban park.', coords: [51.505, -0.09], category: 'nature' },
-    { id: 3, name: 'Famous Restaurant', description: 'Known for its exquisite cuisine.', coords: [51.515, -0.08], category: 'food' },
+    { id: 1, name: 'Historic Museum', description: 'A museum of local history.', coordinates: [51.51, -0.1], category: 'culture' },
+    { id: 2, name: 'City Park', description: 'A large urban park.', coordinates: [51.505, -0.09], category: 'nature' },
+    { id: 3, name: 'Famous Restaurant', description: 'Known for its exquisite cuisine.', coordinates: [51.515, -0.08], category: 'food' },
   ]);
+
+  let nextId = 4; // Start after the initial POIs
+
+  const filteredPois = computed(() => pois.value);
 
   function getMarkerIcon(category: POI['category']) {
     const color = categoryColors[category];
@@ -52,5 +58,18 @@ export function usePois() {
     return categoryColors[category] || 'gray';
   }
 
-  return { pois, getMarkerIcon, getCategoryColor };
-}
+  function addPoi(poiData: Omit<POI, 'id'>) {
+    pois.value.push({
+      id: nextId++,
+      ...poiData,
+    });
+  }
+
+  return { 
+    pois, 
+    filteredPois,
+    getMarkerIcon, 
+    getCategoryColor,
+    addPoi 
+  };
+});

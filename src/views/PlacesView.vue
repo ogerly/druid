@@ -1,23 +1,24 @@
+
 <script setup lang="ts">
-import { usePois } from '@/composables/usePois';
+import { usePoisStore } from '@/stores/poisStore';
 import { useMapStore } from '@/stores/mapStore';
 import { useRouter } from 'vue-router';
+import type { POI } from '@/stores/poisStore';
 
-const { pois } = usePois();
+const poisStore = usePoisStore();
 const mapStore = useMapStore();
 const router = useRouter();
 
-const showOnMap = (poi: any) => {
+const showOnMap = (poi: POI) => {
   mapStore.selectPoi(poi.id, poi.coordinates);
-  router.push('/');
+  router.push('/'); // Assuming '/' is the MapView
 };
 
-const getCategoryColor = (category: string) => {
+const getCategoryClass = (category: POI['category']) => {
   const colors: Record<string, string> = {
-    stone_circle: 'badge-primary',
-    burial_mound: 'badge-secondary',
-    sacred_grove: 'badge-accent',
-    ritual_site: 'badge-info',
+    culture: 'badge-primary',
+    nature: 'badge-secondary',
+    food: 'badge-accent',
   };
   return colors[category] || 'badge-neutral';
 };
@@ -29,14 +30,14 @@ const getCategoryColor = (category: string) => {
     
     <div class="grid gap-4 md:grid-cols-2">
       <div 
-        v-for="poi in pois" 
+        v-for="poi in poisStore.pois" 
         :key="poi.id"
         class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
       >
         <div class="card-body">
           <h2 class="card-title">
             {{ poi.name }}
-            <div class="badge" :class="getCategoryColor(poi.category)">
+            <div class="badge" :class="getCategoryClass(poi.category)">
               {{ poi.category.replace('_', ' ') }}
             </div>
           </h2>

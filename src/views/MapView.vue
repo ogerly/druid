@@ -1,12 +1,13 @@
+
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from 'vue';
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 import { useMapStore } from '@/stores/mapStore';
-import { usePois } from '@/composables/usePois';
+import { usePoisStore } from '@/stores/poisStore';
 
 const mapStore = useMapStore();
-const { pois, getMarkerIcon } = usePois();
+const poisStore = usePoisStore();
 
 const mapComponent = ref<any>(null);
 
@@ -66,10 +67,10 @@ onMounted(() => {
       
       <!-- POI Markers -->
       <l-marker 
-        v-for="poi in pois" 
+        v-for="poi in poisStore.pois" 
         :key="poi.id" 
         :lat-lng="poi.coordinates" 
-        :icon="getMarkerIcon(poi.category)"
+        :icon="poisStore.getMarkerIcon(poi.category)"
       >
         <l-popup><b>{{ poi.name }}</b><br>{{ poi.description }}</l-popup>
       </l-marker>
