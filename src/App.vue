@@ -2,14 +2,13 @@
   <div class="drawer lg:drawer-open">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" v-model="isSidebarOpen" />
     <div class="drawer-content flex flex-col">
-      <!-- Page content here -->
+      <!-- Map Controls Navbar - nur auf Map-Route sichtbar -->
       <TheNavbar 
-        @toggle-sidebar="toggleSidebar"
+        v-if="isMapRoute"
         @center-on-user="handleCenterOnUser"
         @toggle-recording="handleToggleRecording"
         @clear-path="handleClearPath"
         :is-recording="mapStore.isRecording"
-        class="lg:hidden"
       />
       <main class="flex-1 relative">
         <router-view />
@@ -38,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useMapStore } from './stores/mapStore';
 import TheNavbar from './components/layout/TheNavbar.vue';
@@ -58,9 +57,8 @@ const navLinks = ref([
   { name: 'Settings', path: '/settings', icon: 'settings' },
 ]);
 
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value;
-};
+// Nur auf Map-Route Navbar anzeigen
+const isMapRoute = computed(() => route.path === '/');
 
 const closeSidebar = () => {
   isSidebarOpen.value = false;
@@ -116,10 +114,15 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Main Content ohne Bottom Nav Überlappung */
+/* Main Content Layout */
 main {
-  height: calc(100vh - 4rem);
+  height: calc(100vh - 4rem); /* Platz für Bottom Nav */
   overflow: hidden;
+}
+
+/* Auf Map-Route mit Navbar */
+main:has(+ .btm-nav) {
+  height: calc(100vh - 4rem);
 }
 
 @media (min-width: 1024px) {
