@@ -1,1 +1,0 @@
-import{_ as t,o as a,c as o,a as s}from"./index-B1yLvHsM.js";const c={class:"view-container"},l={__name:"PlacesView",setup(n){return(i,e)=>(a(),o("div",c,[...e[0]||(e[0]=[s("h1",null,"Places",-1),s("p",null,"This is where the list of Points of Interest will be displayed.",-1)])]))}},_=t(l,[["__scopeId","data-v-91c16585"]]);export{_ as default};
