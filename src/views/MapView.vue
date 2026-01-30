@@ -197,8 +197,12 @@ html, body {
 /* Mobile-spezifische Anpassungen */
 @media (max-width: 768px) {
   .w-full.h-full {
-    height: calc(100vh - 4rem);
-    height: calc(100dvh - 4rem); /* Dynamic Viewport für Mobile */
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   
   :deep(.leaflet-control-zoom) {
@@ -208,6 +212,12 @@ html, body {
   
   :deep(.leaflet-popup-content-wrapper) {
     border-radius: 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .w-full.h-full {
+    height: 100vh;
   }
 }
 </style>

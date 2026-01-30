@@ -3,7 +3,7 @@
     <!-- Sidebar content here -->
     <li><a class="text-xl font-bold font-serif">DRUID</a></li>
     <li v-for="link in navLinks" :key="link.name">
-      <router-link :to="link.path">
+      <router-link :to="link.path" @click="closeSidebar">
         <vue-feather :type="link.icon" class="nav-icon" />
         {{ link.name }}
       </router-link>
@@ -15,6 +15,8 @@
 import { ref } from 'vue';
 import VueFeather from 'vue-feather';
 
+const emit = defineEmits(['close']);
+
 const navLinks = ref([
   { name: 'Map', path: '/', icon: 'map' },
   { name: 'Places', path: '/places', icon: 'list' },
@@ -22,4 +24,8 @@ const navLinks = ref([
   { name: 'Profile', path: '/profile', icon: 'user' },
   { name: 'Settings', path: '/settings', icon: 'settings' },
 ]);
+
+const closeSidebar = () => {
+  emit('close');
+};
 </script>
