@@ -1,30 +1,37 @@
 export const pois = [
   {
-    id: 1,
-    name: 'Keltenwelt am Glauberg',
-    description: 'Ein archäologischer Park mit Museum, Forschungszentrum und einem rekonstruierten keltischen Fürstensitz. Berühmt für die lebensgroße Sandsteinstatue eines Keltenfürsten.',
-    coordinates: [50.316, 8.983],
-    category: 'Archaeological'
+    id: '1',
+    name: 'Stonehenge',
+    category: 'stone_circle',
+    coordinates: [51.1789, -1.8262],
+    description: 'A prehistoric monument in Wiltshire, England, consisting of a ring of standing stones.',
   },
   {
-    id: 2,
-    name: 'Externsteine',
-    description: 'Eine markante Sandstein-Felsformation in der Nähe von Horn-Bad Meinberg. Seit Jahrhunderten ein Ort von großer kultureller und spiritueller Bedeutung, oft mit germanischen und keltischen Ritualen in Verbindung gebracht.',
-    coordinates: [51.870, 8.917],
-    category: 'Nature & Mythos'
+    id: '2',
+    name: 'Avebury',
+    category: 'stone_circle',
+    coordinates: [51.4286, -1.8540],
+    description: 'A Neolithic henge monument containing three stone circles, around the village of Avebury.',
   },
   {
-    id: 3,
-    name: 'Heuneburg',
-    description: 'Eine der bedeutendsten frühkeltischen Höhensiedlungen in Mitteleuropa. Teile der Befestigungsanlagen mit einer Lehmziegelmauer nach griechischem Vorbild wurden rekonstruiert.',
-    coordinates: [48.100, 9.400],
-    category: 'Reconstructed'
+    id: '3',
+    name: 'Sutton Hoo',
+    category: 'burial_mound',
+    coordinates: [52.089, 1.341],
+    description: 'An Anglo-Saxon ship burial site, including a wealth of artifacts of outstanding historical and archaeological significance.',
+  },
+  {
+    id: '4',
+    name: 'The Sanctuary',
+    category: 'ritual_site',
+    coordinates: [51.4116, -1.8315],
+    description: 'A Neolithic site on Overton Hill, part of the Avebury World Heritage Site. It was the site of a timber circle or a stone circle.',
   },
     {
-    id: 4,
-    name: 'Goseck-Kreis',
-    description: 'Eine neolithische Kreisgrabenanlage, die als das älteste Sonnenobservatorium der Welt gilt. Die Anlage wurde rekonstruiert und ist für Besucher zugänglich.',
-    coordinates: [51.200, 11.867],
-    category: 'Reconstructed'
+    id: '5',
+    name: 'Wistman\'s Wood',
+    category: 'sacred_grove',
+    coordinates: [50.563, -3.961],
+    description: 'An ancient dwarf oak wood on Dartmoor, Devon. It is a rare example of the ancient upland oakwoods of Britain.',
   }
 ];

@@ -1,17 +1,10 @@
 <template>
-  <div class="view-container">
-    <h1>Settings</h1>
-    <p>Application settings will be managed here.</p>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold">Settings</h1>
+    <p>This is where the application settings will be configured.</p>
   </div>
 </template>
 
 <script setup>
-// Component logic will go here
+// No script needed for this placeholder
 </script>
-
-<style scoped>
-.view-container {
-  padding: 80px 20px 20px; 
-  color: #fff;
-}
-</style>

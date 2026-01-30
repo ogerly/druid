@@ -1,38 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MapView from '../views/MapView.vue';
+import type { RouteRecordRaw } from 'vue-router';
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Map',
-    component: MapView
+    component: () => import('../views/MapView.vue'),
   },
   {
     path: '/places',
     name: 'Places',
-    // lazy-loaded component
-    component: () => import('../views/PlacesView.vue')
+    component: () => import('../views/PlacesView.vue'),
   },
   {
     path: '/calendar',
     name: 'Calendar',
-    component: () => import('../views/CalendarView.vue')
+    component: () => import('../views/CalendarView.vue'),
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: () => import('../views/ProfileView.vue')
+    component: () => import('../views/ProfileView.vue'),
   },
   {
     path: '/settings',
     name: 'Settings',
-    component: () => import('../views/SettingsView.vue')
-  }
+    component: () => import('../views/SettingsView.vue'),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 });
 
 export default router;

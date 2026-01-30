@@ -1,17 +1,10 @@
 <template>
-  <div class="view-container">
-    <h1>User Profile</h1>
-    <p>Here, users will see their saved paths and visited places.</p>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold">User Profile</h1>
+    <p>This is where the user profile information will be displayed.</p>
   </div>
 </template>
 
 <script setup>
-// Component logic will go here
+// No script needed for this placeholder
 </script>
-
-<style scoped>
-.view-container {
-  padding: 80px 20px 20px; 
-  color: #fff;
-}
-</style>

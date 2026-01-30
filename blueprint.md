@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-DRUID is a mobile-first web application designed for users to discover and explore Celtic and pre-Christian historical sites. It features an interactive map as its core, allowing users to record their own paths, discover Points of Interest (POIs), and immerse themselves in history and nature. The project is built with Vue.js 3, Vite, and Leaflet.
+DRUID is a mobile-first web application designed for users to discover and explore Celtic and pre-Christian historical sites. It features an interactive map as its core, allowing users to record their own paths, discover Points of Interest (POIs), and immerse themselves in history and nature. The project is built with Vue.js 3, Vite, and Leaflet, with a strong focus on a clean, modern UI using Tailwind CSS and DaisyUI.
 
 ## 2. Design & Features Implemented
 
@@ -27,32 +27,43 @@ This section documents the project's features and design from the initial versio
 *   **Data Composable:** Developed `usePois.js` to fetch and manage POI data.
 *   **Map Display:** Rendered POIs on the map with category-specific colored markers and descriptive popups.
 
-## 4. Current Plan: SPA Navigation & Sidebar Views
+### Version 4 (Architecture Refactoring: Tailwind & DaisyUI)
 
-This phase will transform the application from a single-view map into a full Single-Page Application (SPA) by implementing routing and creating the views for the sidebar navigation.
+*   **Dependency Upgrade:** Integrated `tailwindcss`, `postcss`, `autoprefixer`, and `daisyui` to establish a robust and modern styling foundation.
+*   **Layout Overhaul:** Replaced a custom CSS layout with a professional-grade `drawer` layout from DaisyUI for a responsive, consistent, and maintainable structure.
+*   **Component Refactoring:** Rebuilt `App.vue`, `TheNavbar.vue`, `TheSidebar.vue`, and `MapView.vue` using Tailwind and DaisyUI utility classes, simplifying code and removing layout hacks.
 
-1.  **Install Vue Router:**
-    *   Add `vue-router` to the project dependencies.
+### Version 5 (SPA Navigation with Vue Router)
 
-2.  **Configure Routes:**
-    *   Create a `src/router/index.js` file.
-    *   Define routes for the following pages:
-        *   `/` (Map)
-        *   `/places` (Places List)
-        *   `/calendar` (Wheel-of-the-Year)
-        *   `/profile` (User Profile)
-        *   `/settings` (Settings)
+*   **Dependency:** Added `vue-router` to the project.
+*   **Routing Configuration:** Created a `src/router/index.js` file with lazy-loaded routes for all main views (`Map`, `Places`, `Calendar`, `Profile`, `Settings`).
+*   **Application Integration:** Integrated the router into the main Vue instance (`main.js`) and used `<router-view>` in `App.vue` to enable SPA functionality.
+*   **Seamless Navigation:** Updated `TheSidebar.vue` to use `<router-link>`, enabling client-side navigation without page reloads.
+*   **View Placeholders:** Created placeholder components for each new route in the `src/views` directory.
 
-3.  **Create View Components:**
-    *   Create placeholder Vue components for the new views inside `src/views`:
-        *   `PlacesView.vue`
-        *   `CalendarView.vue`
-        *   `ProfileView.vue`
-        *   `SettingsView.vue`
+## 3. Current Plan: Develop "Places" View
 
-4.  **Integrate Router:**
-    *   Update `main.js` to install and use the router plugin.
-    *   Modify `App.vue` to use the `<router-view>` component to display the current page.
+This phase will build out the "Places" view to display a list of all Points of Interest. It will also introduce a state management solution to allow interaction between the `PlacesView` and the `MapView`.
 
-5.  **Update Sidebar Navigation:**
-    *   Modify `TheSidebar.vue` to use `<router-link>` components to link to the newly created pages, providing a seamless navigation experience.
+1.  **Install Pinia:**
+    *   Add `pinia`, the official state management library for Vue, to the project dependencies.
+    *   Integrate Pinia into the main Vue application instance (`main.js`).
+
+2.  **Create a Map Store:**
+    *   Create a new file `src/stores/mapStore.js`.
+    *   Define a Pinia store to manage the map's state, including its center coordinates and zoom level.
+
+3.  **Refactor `MapView.vue`:**
+    *   Connect `MapView.vue` to the new Pinia store.
+    *   The map's center and zoom level should be read from and updated in the store.
+
+4.  **Implement `PlacesView.vue`:**
+    *   Fetch the list of POIs using the existing `usePois` composable.
+    *   Display the POIs in a styled list or card layout using DaisyUI components.
+    *   For each item in the list, add a button or link ("Show on Map").
+
+5.  **Enable Interactivity:**
+    *   When a user clicks "Show on Map" for a specific POI:
+        *   The action will call a function in the Pinia store to update the map's center to the coordinates of that POI.
+        *   The user will then be programmatically navigated back to the `MapView` (`/`).
+    *   The map, now connected to the store, will automatically center on the selected POI.

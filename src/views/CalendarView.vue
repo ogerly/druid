@@ -1,17 +1,10 @@
 <template>
-  <div class="view-container">
-    <h1>Wheel of the Year</h1>
-    <p>This page will visualize the Celtic Wheel of the Year.</p>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold">Wheel of the Year</h1>
+    <p>This is where the Celtic Wheel of the Year will be displayed.</p>
   </div>
 </template>
 
 <script setup>
-// Component logic will go here
+// No script needed for this placeholder
 </script>
-
-<style scoped>
-.view-container {
-  padding: 80px 20px 20px; 
-  color: #fff;
-}
-</style>

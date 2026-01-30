@@ -1,100 +1,33 @@
 <template>
-  <nav class="navbar">
-    <button class="icon-button hamburger-button" @click="emit('toggleSidebar')">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="logo">DRUID</div>
-    <div class="action-icons">
-        <button class="icon-button" @click="emit('center')" title="Center on Me">&#10148;</button>
-        <button class="icon-button" @click="emit('toggleRec')" :class="{ 'is-recording': isRecording }" title="Start/Stop Recording">
-            <span class="rec-dot"></span>
-        </button>
-        <button class="icon-button" @click="emit('clear')" title="Clear Path">&#128465;</button>
+  <div class="navbar bg-base-300 shadow-lg">
+    <div class="navbar-start">
+      <label for="my-drawer-2" class="btn btn-square btn-ghost drawer-button lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </label>
     </div>
-  </nav>
+    <div class="navbar-center">
+      <a class="btn btn-ghost normal-case text-xl font-bold font-serif">DRUID</a>
+    </div>
+    <div class="navbar-end">
+      <button class="btn btn-ghost btn-circle" @click="emit('center-on-user')" title="Center on Me">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+      </button>
+      <button class="btn btn-ghost btn-circle" @click="emit('toggle-recording')" :class="{ 'text-red-500': isRecording }" title="Start/Stop Recording">
+        <div class="indicator">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.55 13.41A6.5 6.5 0 1113.41 15.55L12 12l3.55 1.41z" /></svg>
+          <span v-if="isRecording" class="indicator-item badge badge-secondary badge-xs"></span>
+        </div>
+      </button>
+       <button class="btn btn-ghost btn-circle" @click="emit('clear-path')" title="Clear Path">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
 const props = defineProps({
   isRecording: Boolean
 });
-const emit = defineEmits(['toggleSidebar', 'center', 'toggleRec', 'clear']);
+const emit = defineEmits(['toggle-sidebar', 'center-on-user', 'toggle-recording', 'clear-path']);
 </script>
-
-<style scoped>
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  background-color: rgba(25, 25, 25, 0.9);
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 1rem;
-  z-index: 1100;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  box-sizing: border-box; /* This is the fix */
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  letter-spacing: 2px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 1.6rem;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hamburger-button {
-  flex-direction: column;
-  justify-content: space-around;
-  width: 30px;
-  height: 25px;
-  padding: 0;
-}
-
-.hamburger-button span {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background-color: #fff;
-  border-radius: 3px;
-}
-
-.action-icons {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.rec-dot {
-    width: 18px;
-    height: 18px;
-    background-color: white;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.icon-button.is-recording .rec-dot {
-    background-color: #ff4757;
-    box-shadow: 0 0 8px #ff4757;
-}
-
-</style>

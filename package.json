@@ -6,18 +6,27 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "leaflet": "^1.9.4",
+    "pinia": "^3.0.4",
     "vue": "^3.5.24",
+    "vue-feather": "^2.0.0",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^24.10.1",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/tsconfig": "^0.8.1",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.12.2",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.1",
     "typescript": "~5.9.3",
     "vite": "^5.2.0",
     "vue-tsc": "^3.1.4"
