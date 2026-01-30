@@ -177,7 +177,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useMapStore } from '../../stores/mapStore';
+import { useMapStore } from '@/stores/mapStore';
 import VueFeather from 'vue-feather';
 
 const mapStore = useMapStore();

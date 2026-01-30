@@ -19,10 +19,10 @@ const emit = defineEmits(['close']);
 
 const navLinks = ref([
   { name: 'Map', path: '/', icon: 'map' },
+  { name: 'Track', path: '/tracking', icon: 'activity' },
   { name: 'Places', path: '/places', icon: 'list' },
   { name: 'Calendar', path: '/calendar', icon: 'calendar' },
   { name: 'Profile', path: '/profile', icon: 'user' },
-  { name: 'Settings', path: '/settings', icon: 'settings' },
 ]);
 
 const closeSidebar = () => {
