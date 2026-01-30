@@ -8,6 +8,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/MapView.vue'),
   },
   {
+    path: '/tracking',
+    name: 'Tracking',
+    component: () => import('../views/TrackingView.vue'),
+  },
+  {
     path: '/places',
     name: 'Places',
     component: () => import('../views/PlacesView.vue'),
