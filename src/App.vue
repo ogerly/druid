@@ -154,8 +154,9 @@ main {
 .btm-nav {
   flex-shrink: 0;
   height: 4rem;
-  z-index: 50;
+  z-index: 100 !important;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
 }
 
 /* Active Route Highlight */

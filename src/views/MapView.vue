@@ -177,12 +177,14 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   touch-action: pan-x pan-y;
+  z-index: 1;
 }
 
 /* Leaflet Container muss auch 100% sein */
 :deep(.leaflet-container) {
   width: 100%;
   height: 100%;
+  z-index: 1;
 }
 
 /* Bessere Touch-Targets für Mobile */
