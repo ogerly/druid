@@ -1,0 +1,1 @@
+import{q as o,g as t,y as s}from"./index-D23fe2f2.js";const r={class:"p-8"},n={__name:"ProfileView",setup(l){return(i,e)=>(o(),t("div",r,[...e[0]||(e[0]=[s("h1",{class:"text-2xl font-bold"},"User Profile",-1),s("p",null,"This is where the user profile information will be displayed.",-1)])]))}};export{n as default};

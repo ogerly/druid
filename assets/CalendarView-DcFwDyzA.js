@@ -1,0 +1,1 @@
+import{q as s,g as l,y as t}from"./index-D23fe2f2.js";const a={class:"p-8"},i={__name:"CalendarView",setup(o){return(r,e)=>(s(),l("div",a,[...e[0]||(e[0]=[t("h1",{class:"text-2xl font-bold"},"Wheel of the Year",-1),t("p",null,"This is where the Celtic Wheel of the Year will be displayed.",-1)])]))}};export{i as default};
