@@ -203,6 +203,15 @@ onMounted(() => {
         :opacity="0.7"
       />
 
+      <!-- Active Track Polyline (from IndexedDB) -->
+      <l-polyline 
+        v-if="mapStore.activeTrack && mapStore.activeTrack.waypoints.length > 0"
+        :lat-lngs="mapStore.activeTrack.waypoints.map(wp => [wp.lat, wp.lng])" 
+        color="red"
+        :weight="4"
+        :opacity="0.8"
+      />
+
       <!-- Saved Paths -->
       <l-polyline 
         v-for="path in mapStore.savedPaths" 
