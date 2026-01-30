@@ -1,1 +1,0 @@
-import{l as o,g as t,x as s}from"./index-BCAJnDni.js";const l={class:"p-8"},n={__name:"ProfileView",setup(r){return(i,e)=>(o(),t("div",l,[...e[0]||(e[0]=[s("h1",{class:"text-2xl font-bold"},"User Profile",-1),s("p",null,"This is where the user profile information will be displayed.",-1)])]))}};export{n as default};
