@@ -1,6 +1,23 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
+// Erweiterte Interfaces mit Metadaten
+interface UserMarker {
+  id: number;
+  position: [number, number];
+  label?: string;
+  description?: string;
+  timestamp: number;
+  category?: string;
+}
+
+interface SavedPath {
+  id: number;
+  points: [number, number][];
+  name?: string;
+  timestamp: number;
+}
+
 export const useMapStore = defineStore('map', () => {
   const center = ref<[number, number]>([51.1657, 10.4515]); // Germany center
   const zoom = ref(6);
@@ -10,8 +27,8 @@ export const useMapStore = defineStore('map', () => {
   const userLocation = ref<[number, number] | null>(null);
   const isRecording = ref(false);
   const currentPath = ref<[number, number][]>([]);
-  const savedPaths = ref<{ id: number; points: [number, number][] }[]>([]);
-  const userMarkers = ref<{ id: number; position: [number, number] }[]>([]);
+  const savedPaths = ref<SavedPath[]>([]);
+  const userMarkers = ref<UserMarker[]>([]);
   
   let nextPathId = 1;
   let nextMarkerId = 1;
@@ -70,7 +87,8 @@ export const useMapStore = defineStore('map', () => {
       if (currentPath.value.length > 0) {
         savedPaths.value.push({
           id: nextPathId++,
-          points: [...currentPath.value]
+          points: [...currentPath.value],
+          timestamp: Date.now()
         });
         currentPath.value = [];
       }
@@ -89,12 +107,31 @@ export const useMapStore = defineStore('map', () => {
     isRecording.value = false;
   };
   
-  // Marker Functions
-  const addUserMarker = (position: [number, number]) => {
+  // Marker Functions - Erweitert mit Metadaten
+  const addUserMarker = (
+    position: [number, number],
+    label?: string,
+    description?: string,
+    category?: string
+  ) => {
     userMarkers.value.push({
       id: nextMarkerId++,
-      position
+      position,
+      label,
+      description,
+      timestamp: Date.now(),
+      category: category || 'personal'
     });
+  };
+  
+  const updateUserMarker = (
+    id: number,
+    updates: Partial<Omit<UserMarker, 'id' | 'timestamp'>>
+  ) => {
+    const marker = userMarkers.value.find(m => m.id === id);
+    if (marker) {
+      Object.assign(marker, updates);
+    }
   };
   
   const removeUserMarker = (id: number) => {
@@ -102,9 +139,12 @@ export const useMapStore = defineStore('map', () => {
     if (index !== -1) {
       userMarkers.value.splice(index, 1);
     }
+  };updateUserMarker,
+    removeUserMarker,
   };
+});
 
-  return {
+export type { UserMarker, SavedPath }return {
     center,
     zoom,
     selectedPoiId,

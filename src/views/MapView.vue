@@ -4,12 +4,15 @@ import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from "@vue-leaflet/vue-leaflet";
 import { useMapStore } from '@/stores/mapStore';
 import { usePoisStore } from '@/stores/poisStore';
+import MarkerFormModal from '@/components/MarkerFormModal.vue';
 import L from 'leaflet';
 
 const mapStore = useMapStore();
 const poisStore = usePoisStore();
 
 const mapComponent = ref<any>(null);
+const markerFormModal = ref<InstanceType<typeof MarkerFormModal> | null>(null);
+const pendingMarkerPosition = ref<[number, number] | null>(null);
 
 // Custom icon for user location
 const userLocationIcon = new L.Icon({
@@ -33,15 +36,45 @@ const userMarkerIcon = new L.Icon({
 
 // Handle map clicks
 const onMapClick = (event: any) => {
+  const latLng: [number, number] = [event.latlng.lat, event.latlng.lng];
+  
   if (mapStore.isRecording) {
     // Add point to path while recording
-    const latLng: [number, number] = [event.latlng.lat, event.latlng.lng];
     mapStore.addPointToPath(latLng);
   } else {
-    // Add user marker when not recording
-    const latLng: [number, number] = [event.latlng.lat, event.latlng.lng];
-    mapStore.addUserMarker(latLng);
+    // Show modal to add user marker with metadata
+    pendingMarkerPosition.value = latLng;
+    markerFormModal.value?.showModal();
   }
+};
+
+// Handle marker form submission
+const handleMarkerSave = (data: { label?: string; description?: string; category: string }) => {
+  if (pendingMarkerPosition.value) {
+    mapStore.addUserMarker(
+      pendingMarkerPosition.value,
+      data.label,
+      data.description,
+      data.category
+    );
+    pendingMarkerPosition.value = null;
+  }
+};
+
+// Handle marker form cancellation
+const handleMarkerCancel = () => {
+  pendingMarkerPosition.value = null;
+};
+
+// Format date for display
+const formatDate = (timestamp: number) => {
+  return new Date(timestamp).toLocaleString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 };
 
 const centerOnUser = async () => {
@@ -132,13 +165,30 @@ onMounted(() => {
         :icon="userMarkerIcon"
       >
         <l-popup>
-          <div class="flex flex-col gap-2">
-            <span>User Marker</span>
+          <div class="flex flex-col gap-2 min-w-[200px]">
+            <div class="font-bold text-base">
+              {{ marker.label || 'Unbenannter Marker' }}
+            </div>
+            
+            <div v-if="marker.description" class="text-sm opacity-80">
+              {{ marker.description }}
+            </div>
+            
+            <div class="badge badge-sm">{{ marker.category }}</div>
+            
+            <div class="text-xs opacity-60 font-mono">
+              {{ marker.position[0].toFixed(6) }}°, {{ marker.position[1].toFixed(6) }}°
+            </div>
+            
+            <div class="text-xs opacity-50">
+              {{ formatDate(marker.timestamp) }}
+            </div>
+            
             <button 
               @click="mapStore.removeUserMarker(marker.id)"
-              class="btn btn-xs btn-error"
+              class="btn btn-xs btn-error mt-2"
             >
-              Delete
+              Löschen
             </button>
           </div>
         </l-popup>
@@ -163,6 +213,15 @@ onMounted(() => {
         :opacity="0.5"
       />
     </l-map>
+    
+    <!-- Marker Form Modal -->
+    <MarkerFormModal 
+      v-if="pendingMarkerPosition"
+      ref="markerFormModal"
+      :position="pendingMarkerPosition"
+      @save="handleMarkerSave"
+      @cancel="handleMarkerCancel"
+    />
   </div>
 </template>
 
