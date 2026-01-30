@@ -2,14 +2,13 @@
   <div class="drawer lg:drawer-open app-container">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" v-model="isSidebarOpen" />
     <div class="drawer-content">
-      <!-- Map Controls Navbar - nur auf Map-Route sichtbar -->
+      <!-- Map Controls Navbar - auf Map-Route sichtbar -->
       <TheNavbar 
         v-if="isMapRoute"
         @center-on-user="handleCenterOnUser"
         @toggle-recording="handleToggleRecording"
         @clear-path="handleClearPath"
         :is-recording="mapStore.isRecording"
-        class="navbar-mobile"
       />
       <main>
         <router-view />
@@ -136,7 +135,7 @@ body {
 }
 
 /* Navbar */
-.navbar-mobile {
+.navbar {
   flex-shrink: 0;
   height: 4rem;
 }
@@ -163,12 +162,5 @@ main {
 .btm-nav button.active {
   background-color: rgba(255, 255, 255, 0.1);
   color: var(--color-primary);
-}
-
-/* Desktop Styles */
-@media (min-width: 1024px) {
-  .navbar-mobile {
-    display: none;
-  }
 }
 </style>

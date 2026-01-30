@@ -139,12 +139,9 @@ export const useMapStore = defineStore('map', () => {
     if (index !== -1) {
       userMarkers.value.splice(index, 1);
     }
-  };updateUserMarker,
-    removeUserMarker,
   };
-});
 
-export type { UserMarker, SavedPath }return {
+  return {
     center,
     zoom,
     selectedPoiId,
@@ -162,6 +159,9 @@ export type { UserMarker, SavedPath }return {
     addPointToPath,
     clearPath,
     addUserMarker,
+    updateUserMarker,
     removeUserMarker,
   };
 });
+
+export type { UserMarker, SavedPath };
