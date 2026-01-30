@@ -1,1 +1,0 @@
-import{l as s,g as n,x as t}from"./index-BfhLa0rh.js";const o={class:"p-8"},r={__name:"SettingsView",setup(i){return(l,e)=>(s(),n("div",o,[...e[0]||(e[0]=[t("h1",{class:"text-2xl font-bold"},"Settings",-1),t("p",null,"This is where the application settings will be configured.",-1)])]))}};export{r as default};
