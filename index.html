@@ -13,15 +13,24 @@
     <meta name="theme-color" content="#16213e" />
     <meta name="description" content="Entdecke archäologische Stätten und zeichne deine Wanderwege auf" />
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/druid/manifest.json" />
+    <!-- PWA Manifest (dynamisch je nach Umgebung) -->
+    <link rel="manifest" href="/druid/manifest.json" id="manifest-link" />
     
     <!-- Apple Touch Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/druid/icons/icon-192.png" />
     
     <title>DRUID - Discover Ancient Sites</title>
-    <script type="module" crossorigin src="/druid/assets/index-V6WiKz7v.js"></script>
-    <link rel="stylesheet" crossorigin href="/druid/assets/index-lZUMgWad.css">
+    
+    <!-- Set correct paths based on environment -->
+    <script>
+      // Development: Use manifest.dev.json and sw.dev.js
+      // Production: Use manifest.json and sw.js (with /druid/ base)
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        document.getElementById('manifest-link').href = '/manifest.dev.json';
+      }
+    </script>
+    <script type="module" crossorigin src="/druid/assets/index-DhICvMMZ.js"></script>
+    <link rel="stylesheet" crossorigin href="/druid/assets/index-BkD_V4sz.css">
   </head>
   <body>
     <div id="app"></div>
