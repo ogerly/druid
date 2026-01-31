@@ -1,1 +1,0 @@
-import{o as s,c as o,a as t}from"./index-BHRAPVQn.js";const n={class:"p-8"},r={__name:"SettingsView",setup(a){return(i,e)=>(s(),o("div",n,[...e[0]||(e[0]=[t("h1",{class:"text-2xl font-bold"},"Settings",-1),t("p",null,"This is where the application settings will be configured.",-1)])]))}};export{r as default};
