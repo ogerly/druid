@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useMapStore } from '@/stores/mapStore';
 import TrackingControl from '@/components/TrackingControl.vue';
 import MapView from './MapView.vue';
-
-const mapStore = useMapStore();
-
-// Computed
-const isTracking = computed(() => mapStore.isRecording);
 </script>
 
 <template>

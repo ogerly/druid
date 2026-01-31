@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { db, type Track, type Waypoint } from '../db/trackDatabase';
+import { db, type Track } from '../db/trackDatabase';
 import { TrackingEngine, type TrackingConfig, defaultTrackingConfig } from '../services/trackingEngine';
 import { wakeLockManager } from '../utils/wakeLock';
 

@@ -155,6 +155,8 @@ class TrackDatabase extends Dexie {
       const prev = track.waypoints[i - 1];
       const curr = track.waypoints[i];
       
+      if (!prev || !curr) continue;
+      
       const segmentDistance = this.calculateDistance(
         prev.lat,
         prev.lng,
