@@ -37,6 +37,12 @@ export const navLinks: NavLink[] = [
     description: 'Liste aller Points of Interest'
   },
   {
+    name: 'Tracks',
+    path: '/tracks',
+    icon: 'activity',
+    description: 'Meine GPS-Wanderungen'
+  },
+  {
     name: 'Calendar',
     path: '/calendar',
     icon: 'calendar',
