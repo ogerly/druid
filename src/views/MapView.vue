@@ -5,7 +5,12 @@ import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from "@vue-leaflet/vue-l
 import { useMapStore } from '@/stores/mapStore';
 import { usePoisStore } from '@/stores/poisStore';
 import MarkerFormModal from '@/components/MarkerFormModal.vue';
+import TrackingControl from '@/components/TrackingControl.vue';
 import L from 'leaflet';
+
+const props = defineProps({
+  showTrackingPanel: Boolean
+});
 
 const mapStore = useMapStore();
 const poisStore = usePoisStore();
@@ -111,7 +116,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full">
+  <div class="w-full h-full relative">
     <l-map
       ref="mapComponent"
       :zoom="mapStore.zoom"
@@ -223,6 +228,14 @@ onMounted(() => {
       />
     </l-map>
     
+    <!-- Tracking Control Panel (Floating) -->
+    <div
+      v-if="showTrackingPanel"
+      class="absolute bottom-20 lg:bottom-4 left-1/2 transform -translate-x-1/2 z-[500] w-11/12 max-w-md"
+    >
+      <TrackingControl />
+    </div>
+    
     <!-- Marker Form Modal -->
     <MarkerFormModal 
       v-if="pendingMarkerPosition"
@@ -246,6 +259,11 @@ onMounted(() => {
   bottom: 0;
   touch-action: pan-x pan-y;
   z-index: 1;
+}
+
+/* Relative wrapper for floating elements */
+.relative {
+  position: relative;
 }
 
 /* Leaflet Container muss auch 100% sein */

@@ -12,18 +12,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import VueFeather from 'vue-feather';
+import { navLinks } from '@/config/navigation';
+
+/**
+ * ⚠️ WICHTIG: Navigation-Links werden aus @/config/navigation.ts importiert!
+ * Änderungen an der Navigation NUR DORT vornehmen.
+ */
 
 const emit = defineEmits(['close']);
-
-const navLinks = ref([
-  { name: 'Map', path: '/', icon: 'map' },
-  { name: 'Track', path: '/tracking', icon: 'activity' },
-  { name: 'Places', path: '/places', icon: 'list' },
-  { name: 'Calendar', path: '/calendar', icon: 'calendar' },
-  { name: 'Profile', path: '/profile', icon: 'user' },
-]);
 
 const closeSidebar = () => {
   emit('close');

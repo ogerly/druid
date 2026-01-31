@@ -2,16 +2,18 @@
   <div class="drawer lg:drawer-open app-container">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" v-model="isSidebarOpen" />
     <div class="drawer-content">
-      <!-- Map Controls Navbar - auf Map-Route sichtbar -->
+      <!-- Navbar immer sichtbar mit bedingten Controls -->
       <TheNavbar 
-        v-if="isMapRoute"
+        :show-map-controls="showMapControls"
+        :show-settings-control="showSettingsControl"
         @center-on-user="handleCenterOnUser"
-        @toggle-recording="handleToggleRecording"
+        @toggle-tracking="showTrackingPanel = !showTrackingPanel"
         @clear-path="handleClearPath"
-        :is-recording="mapStore.isRecording"
+        @go-to-settings="navigateTo('/settings')"
+        :is-tracking="mapStore.isRecording"
       />
       <main>
-        <router-view />
+        <router-view :show-tracking-panel="showTrackingPanel" />
       </main>
       
       <!-- Mobile Bottom Dock Navigation -->
@@ -43,22 +45,23 @@ import { useMapStore } from './stores/mapStore';
 import TheNavbar from './components/layout/TheNavbar.vue';
 import TheSidebar from './components/layout/TheSidebar.vue';
 import VueFeather from 'vue-feather';
+import { navLinks } from './config/navigation';
+
+/**
+ * ⚠️ WICHTIG: Navigation-Links werden aus @/config/navigation.ts importiert!
+ * Änderungen an der Navigation NUR DORT vornehmen.
+ */
 
 const router = useRouter();
 const route = useRoute();
 const mapStore = useMapStore();
 const isSidebarOpen = ref(false);
+const showTrackingPanel = ref(false);
 
-const navLinks = ref([
-  { name: 'Map', path: '/', icon: 'map' },
-  { name: 'Track', path: '/tracking', icon: 'activity' },
-  { name: 'Places', path: '/places', icon: 'list' },
-  { name: 'Calendar', path: '/calendar', icon: 'calendar' },
-  { name: 'Profile', path: '/profile', icon: 'user' },
-]);
-
-// Nur auf Map-Route Navbar anzeigen
+// Navbar immer anzeigen, aber mit unterschiedlichen Controls
 const isMapRoute = computed(() => route.path === '/');
+const showMapControls = computed(() => isMapRoute.value);
+const showSettingsControl = computed(() => !isMapRoute.value);
 
 const closeSidebar = () => {
   isSidebarOpen.value = false;
@@ -80,10 +83,6 @@ const handleCenterOnUser = async () => {
   } catch (error) {
     console.error('GPS Error:', error);
   }
-};
-
-const handleToggleRecording = () => {
-  mapStore.toggleRecording();
 };
 
 const handleClearPath = () => {

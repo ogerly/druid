@@ -15,10 +15,17 @@ app.mount('#app');
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    // Use different SW for dev vs production
+    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const base = isDev ? '/' : '/druid/';
+    const swFile = isDev ? 'sw.dev.js' : 'sw.js';
+    const swPath = `${base}${swFile}`;
+    
     navigator.serviceWorker
-      .register('/druid/sw.js', { scope: '/druid/' })
+      .register(swPath, { scope: base })
       .then((registration) => {
         console.log('✅ Service Worker registered:', registration.scope);
+        console.log('🔧 Environment:', isDev ? 'Development' : 'Production');
         
         // Check for updates
         registration.addEventListener('updatefound', () => {
@@ -35,6 +42,7 @@ if ('serviceWorker' in navigator) {
       })
       .catch((error) => {
         console.error('❌ Service Worker registration failed:', error);
+        console.error('🔍 SW Path:', swPath);
       });
   });
 }
