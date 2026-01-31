@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Icon Generator</title>
+</head>
+<body>
+  <h1>DRUID Icon Generator</h1>
+  <p>Generiere PNG-Icons für PWA...</p>
+  
+  <canvas id="canvas" style="border: 1px solid #ccc;"></canvas>
+  <br><br>
+  <div id="downloads"></div>
+
+  <script>
+    const sizes = [512, 384, 192, 152, 144, 128, 96, 72];
+    const downloadsDiv = document.getElementById('downloads');
+    
+    function generateIcon(size) {
+      const canvas = document.getElementById('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      
+      // Background gradient
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#16213e');
+      gradient.addColorStop(1, '#0f3460');
+      ctx.fillStyle = gradient;
+      
+      // Rounded rectangle
+      const radius = size * 0.176; // 90/512
+      ctx.beginPath();
+      ctx.moveTo(radius, 0);
+      ctx.lineTo(size - radius, 0);
+      ctx.quadraticCurveTo(size, 0, size, radius);
+      ctx.lineTo(size, size - radius);
+      ctx.quadraticCurveTo(size, size, size - radius, size);
+      ctx.lineTo(radius, size);
+      ctx.quadraticCurveTo(0, size, 0, size - radius);
+      ctx.lineTo(0, radius);
+      ctx.quadraticCurveTo(0, 0, radius, 0);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Stone circle
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const stoneRadius = size * 0.039; // 20/512
+      const circleRadius = size * 0.176; // 90/512
+      
+      ctx.fillStyle = '#8B7355';
+      ctx.globalAlpha = 0.9;
+      
+      for (let i = 0; i < 8; i++) {
+        const angle = (i * Math.PI * 2) / 8 - Math.PI / 2;
+        const x = centerX + Math.cos(angle) * circleRadius;
+        const y = centerY + Math.sin(angle) * circleRadius;
+        ctx.beginPath();
+        ctx.arc(x, y, stoneRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Center altar
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#A0826D';
+      const altarW = size * 0.117; // 60/512
+      const altarH = size * 0.137; // 70/512
+      ctx.fillRect(centerX - altarW/2, centerY - altarH/2, altarW, altarH);
+      
+      // GPS marker
+      ctx.fillStyle = '#E94560';
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, size * 0.023, 0, Math.PI * 2); // 12/512
+      ctx.fill();
+      
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, size * 0.012, 0, Math.PI * 2); // 6/512
+      ctx.fill();
+      
+      // Text
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold ${size * 0.094}px Arial`; // 48/512
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('DRUID', centerX, size * 0.82); // 420/512
+      
+      // Download link
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `icon-${size}.png`;
+        link.textContent = `Download icon-${size}.png`;
+        link.style.display = 'block';
+        link.style.marginBottom = '10px';
+        downloadsDiv.appendChild(link);
+      });
+    }
+    
+    // Generate all sizes
+    sizes.forEach((size, index) => {
+      setTimeout(() => generateIcon(size), index * 100);
+    });
+  </script>
+</body>
+</html>

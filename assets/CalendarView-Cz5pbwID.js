@@ -1,0 +1,1 @@
+import{o as s,c as a,a as t}from"./index-BHRAPVQn.js";const l={class:"p-8"},c={__name:"CalendarView",setup(o){return(r,e)=>(s(),a("div",l,[...e[0]||(e[0]=[t("h1",{class:"text-2xl font-bold"},"Wheel of the Year",-1),t("p",null,"This is where the Celtic Wheel of the Year will be displayed.",-1)])]))}};export{c as default};
