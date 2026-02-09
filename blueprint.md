@@ -8,62 +8,42 @@ DRUID is a mobile-first web application designed for users to discover and explo
 
 This section documents the project's features and design from the initial version to the current one.
 
-### Version 1 (Initial Setup)
+### Version 1-5 (Summary)
 
-*   **Core Map Functionality:** Interactive map using Leaflet.js, marker placement.
-*   **Geolocation:** "Center on Me" functionality.
-*   **Path Recording:** Start/Stop/Clear path recording.
-*   **Composable Logic:** Map logic extracted into `useMap.js`.
+*   **Core Functionality:** Established an interactive Leaflet map, geolocation, basic path recording, and SPA navigation with Vue Router.
+*   **UI/UX:** Implemented a responsive mobile-first layout using a DaisyUI drawer, a navigation bar, and a sidebar.
+*   **Data Management:** Fetched and displayed POIs from a mock data source and laid the groundwork for state management.
+*   **Architecture:** Built on a modern Vue 3 foundation with TypeScript, `<script setup>`, and a composable-based architecture.
 
-### Version 2 (Layout & UI Refinement)
+### Version 6 (Enhanced Tracking and Data Management)
 
-*   **Git Repository & Docs:** Initialized Git, created `README.md`, `WHITEPAPER.md` and `blueprint.md`.
-*   **Mobile-First Layout:** Implemented `TheNavbar.vue` and `TheSidebar.vue`.
-*   **UI/UX Improvements:** Moved map controls to the navbar, added visual feedback for recording, and fixed CSS layout issues.
+*   **Flexible Tracking Interval:** Added a setting in the `SettingsView` to allow users to configure the GPS tracking interval in seconds. This provides flexibility for different activities like city walks versus hiking.
+*   **JSON Data Export:** Implemented a feature in the `TracksView` to export recorded GPS tracks as a JSON file. This allows for data backup, analysis, and sharing.
+*   **JSON Data Import & Visualization:**
+    *   Created a function to import GPS track data from a JSON file.
+    *   Visualized the imported track on the `MapView` as a polyline, connecting the GPS coordinates.
+    *   Added a sample `wanderstrecke.json` file in the `public` directory to serve as a test case.
 
-### Version 3 (Points of Interest)
+## 3. Current Plan: Refined Tracking & Data Portability
 
-*   **Mock Data:** Created a `pois.js` file with sample data.
-*   **Data Composable:** Developed `usePois.js` to fetch and manage POI data.
-*   **Map Display:** Rendered POIs on the map with category-specific colored markers and descriptive popups.
+Based on direct user feedback, this phase refines the tracking functionality to be more context-aware and improves data handling by using realistic test data and providing export capabilities.
 
-### Version 4 (Architecture Refactoring: Tailwind & DaisyUI)
+1.  **Create Realistic Test Data:**
+    *   Research a real, publicly available hiking trail in Germany (e.g., a section of the Harzer-Hexen-Stieg).
+    *   Create a `public/wanderstrecke.json` file containing the actual GPS coordinates (latitude, longitude) from this trail to serve as a high-quality, realistic test case.
 
-*   **Dependency Upgrade:** Integrated `tailwindcss`, `postcss`, `autoprefixer`, and `daisyui` to establish a robust and modern styling foundation.
-*   **Layout Overhaul:** Replaced a custom CSS layout with a professional-grade `drawer` layout from DaisyUI for a responsive, consistent, and maintainable structure.
-*   **Component Refactoring:** Rebuilt `App.vue`, `TheNavbar.vue`, `TheSidebar.vue`, and `MapView.vue` using Tailwind and DaisyUI utility classes, simplifying code and removing layout hacks.
+2.  **Implement Simplified Tracking Interval Setting:**
+    *   In `SettingsView.vue`, instead of a number input, add a simple toggle or button group with two options:
+        *   **"Stadt" (City):** Sets the tracking interval to 30 seconds.
+        *   **"Wandern" (Hiking):** Sets the tracking interval to 60 seconds.
+    *   Create a `settingsStore.ts` to persist this choice.
+    *   The `trackingEngine.ts` will read the selected interval from this store.
 
-### Version 5 (SPA Navigation with Vue Router)
+3.  **Implement JSON Export:**
+    *   In `TracksView.vue`, add an "Export" button next to each saved track.
+    *   Clicking the button will trigger a download of the track's coordinate data as a JSON file (e.g., `track-1689686400000.json`).
 
-*   **Dependency:** Added `vue-router` to the project.
-*   **Routing Configuration:** Created a `src/router/index.js` file with lazy-loaded routes for all main views (`Map`, `Places`, `Calendar`, `Profile`, `Settings`).
-*   **Application Integration:** Integrated the router into the main Vue instance (`main.js`) and used `<router-view>` in `App.vue` to enable SPA functionality.
-*   **Seamless Navigation:** Updated `TheSidebar.vue` to use `<router-link>`, enabling client-side navigation without page reloads.
-*   **View Placeholders:** Created placeholder components for each new route in the `src/views` directory.
-
-## 3. Current Plan: Develop "Places" View
-
-This phase will build out the "Places" view to display a list of all Points of Interest. It will also introduce a state management solution to allow interaction between the `PlacesView` and the `MapView`.
-
-1.  **Install Pinia:**
-    *   Add `pinia`, the official state management library for Vue, to the project dependencies.
-    *   Integrate Pinia into the main Vue application instance (`main.js`).
-
-2.  **Create a Map Store:**
-    *   Create a new file `src/stores/mapStore.js`.
-    *   Define a Pinia store to manage the map's state, including its center coordinates and zoom level.
-
-3.  **Refactor `MapView.vue`:**
-    *   Connect `MapView.vue` to the new Pinia store.
-    *   The map's center and zoom level should be read from and updated in the store.
-
-4.  **Implement `PlacesView.vue`:**
-    *   Fetch the list of POIs using the existing `usePois` composable.
-    *   Display the POIs in a styled list or card layout using DaisyUI components.
-    *   For each item in the list, add a button or link ("Show on Map").
-
-5.  **Enable Interactivity:**
-    *   When a user clicks "Show on Map" for a specific POI:
-        *   The action will call a function in the Pinia store to update the map's center to the coordinates of that POI.
-        *   The user will then be programmatically navigated back to the `MapView` (`/`).
-    *   The map, now connected to the store, will automatically center on the selected POI.
+4.  **Implement Test Track Visualization:**
+    *   Add a "Load Test Track" button to `MapView.vue`.
+    *   This button will fetch and parse the `public/wanderstrecke.json` file.
+    *   The coordinates will be used to draw a polyline on the map, visualizing the entire hiking trail.

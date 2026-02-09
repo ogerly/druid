@@ -32,6 +32,9 @@ export const useMapStore = defineStore('map', () => {
   const currentPath = ref<[number, number][]>([]);
   const savedPaths = ref<SavedPath[]>([]);
   const userMarkers = ref<UserMarker[]>([]);
+
+  // Track display
+  const trackToDisplay = ref<Track | null>(null);
   
   // New: Advanced Tracking
   const activeTrack = ref<Track | null>(null);
@@ -66,6 +69,10 @@ export const useMapStore = defineStore('map', () => {
 
   const clearSelection = () => {
     selectedPoiId.value = null;
+  };
+
+  const displayTrack = (track: Track) => {
+    trackToDisplay.value = track;
   };
   
   // GPS Functions
@@ -305,6 +312,8 @@ export const useMapStore = defineStore('map', () => {
     currentPath,
     savedPaths,
     userMarkers,
+    // Track display
+    trackToDisplay,
     // New: Advanced tracking
     activeTrack,
     trackingConfig,
@@ -313,6 +322,7 @@ export const useMapStore = defineStore('map', () => {
     setZoom,
     selectPoi,
     clearSelection,
+    displayTrack,
     centerOnUser,
     toggleRecording, // Legacy
     addPointToPath,
@@ -329,4 +339,4 @@ export const useMapStore = defineStore('map', () => {
   };
 });
 
-export type { UserMarker, SavedPath };
+export type { UserMarker, SavedPath, Track };

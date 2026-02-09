@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, watch, onUnmounted } from 'vue';
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from "@vue-leaflet/vue-leaflet";
-import { useMapStore } from '@/stores/mapStore';
+import { useMapStore, type Track } from '@/stores/mapStore';
 import { usePoisStore } from '@/stores/poisStore';
 import MarkerFormModal from '@/components/MarkerFormModal.vue';
 import TrackingControl from '@/components/TrackingControl.vue';
@@ -90,19 +90,28 @@ const centerOnUser = async () => {
   }
 }
 
-const toggleRecording = () => {
-  mapStore.toggleRecording();
-}
+const flyToTrackBounds = (track: Track) => {
+  if (!track || track.waypoints.length === 0 || !mapComponent.value) return;
 
-const clearPath = () => {
-  mapStore.clearPath();
-}
+  const waypoints = track.waypoints.map(wp => [wp.lat, wp.lng] as [number, number]);
+  const bounds = L.latLngBounds(waypoints);
+
+  if (bounds.isValid()) {
+    mapComponent.value.leafletObject.flyToBounds(bounds, { padding: [50, 50] });
+  }
+};
+
+// Watch for track to display
+watch(() => mapStore.trackToDisplay, (newTrack) => {
+  if (newTrack) {
+    flyToTrackBounds(newTrack);
+  }
+});
+
 
 // Expose methods for potential parent component usage
 defineExpose({
   centerOnUser,
-  toggleRecording,
-  clearPath,
 });
 
 onMounted(() => {
@@ -111,7 +120,16 @@ onMounted(() => {
     if (mapComponent.value?.leafletObject) {
       mapComponent.value.leafletObject.invalidateSize();
     }
+    // If a track was selected before map was mounted, fly to it now
+    if (mapStore.trackToDisplay) {
+      flyToTrackBounds(mapStore.trackToDisplay);
+    }
   });
+});
+
+onUnmounted(() => {
+  // Clear the displayed track when leaving the map view
+  mapStore.trackToDisplay = null;
 });
 </script>
 
@@ -149,7 +167,7 @@ onMounted(() => {
         :lat-lng="mapStore.userLocation"
         :icon="userLocationIcon"
       >
-        <l-popup>Your Location</l-popup>
+        <l-popup>Deine Position</l-popup>
       </l-marker>
 
       <!-- POI Markers -->
@@ -199,16 +217,16 @@ onMounted(() => {
         </l-popup>
       </l-marker>
 
-      <!-- Current Recording Path -->
-      <l-polyline 
-        v-if="mapStore.currentPath.length > 0"
-        :lat-lngs="mapStore.currentPath" 
-        color="red"
-        :weight="4"
-        :opacity="0.7"
+      <!-- Displayed Track Polyline -->
+      <l-polyline
+        v-if="mapStore.trackToDisplay && mapStore.trackToDisplay.waypoints.length > 0"
+        :lat-lngs="mapStore.trackToDisplay.waypoints.map(wp => [wp.lat, wp.lng])"
+        color="#8A2BE2" 
+        :weight="5"
+        :opacity="0.8"
       />
 
-      <!-- Active Track Polyline (from IndexedDB) -->
+      <!-- Active Track Polyline (Live Recording) -->
       <l-polyline 
         v-if="mapStore.activeTrack && mapStore.activeTrack.waypoints.length > 0"
         :lat-lngs="mapStore.activeTrack.waypoints.map(wp => [wp.lat, wp.lng])" 
@@ -217,15 +235,6 @@ onMounted(() => {
         :opacity="0.8"
       />
 
-      <!-- Saved Paths -->
-      <l-polyline 
-        v-for="path in mapStore.savedPaths" 
-        :key="path.id"
-        :lat-lngs="path.points" 
-        color="blue"
-        :weight="3"
-        :opacity="0.5"
-      />
     </l-map>
     
     <!-- Tracking Control Panel (Floating) -->

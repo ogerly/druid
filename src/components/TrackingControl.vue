@@ -67,22 +67,23 @@
         <div class="form-control mb-4">
           <label class="label">
             <span class="label-text">Wegpunkt-Intervall</span>
-            <span class="label-text-alt">{{ intervalMinutes }} Minute(n)</span>
+            <span class="label-text-alt">{{ selectedInterval.label }}</span>
           </label>
           <input
-            v-model.number="intervalMinutes"
+            v-model.number="selectedIntervalIndex"
             type="range"
-            min="1"
-            max="5"
+            min="0"
+            :max="intervals.length - 1"
             class="range range-primary"
             step="1"
           />
           <div class="w-full flex justify-between text-xs px-2 mt-1">
-            <span>1 min</span>
-            <span>2 min</span>
-            <span>3 min</span>
-            <span>4 min</span>
-            <span>5 min</span>
+            <span>30s</span>
+            <span>1m</span>
+            <span>2m</span>
+            <span>3m</span>
+            <span>4m</span>
+            <span>5m</span>
           </div>
         </div>
 
@@ -186,12 +187,23 @@ const mapStore = useMapStore();
 const settingsModal = ref<HTMLDialogElement | null>(null);
 const stopModal = ref<HTMLDialogElement | null>(null);
 const trackName = ref('Unbenannte Wanderung');
-const intervalMinutes = ref(1);
 const minDistance = ref(10);
+
+// Interval settings
+const intervals = ref([
+  { value: 0.5, label: '30 Sek' },
+  { value: 1, label: '1 Min' },
+  { value: 2, label: '2 Min' },
+  { value: 3, label: '3 Min' },
+  { value: 4, label: '4 Min' },
+  { value: 5, label: '5 Min' },
+]);
+const selectedIntervalIndex = ref(1); // Default to 1 min (index 1)
 
 // Computed
 const isTracking = computed(() => mapStore.isRecording);
 const liveStats = computed(() => mapStore.liveStats);
+const selectedInterval = computed(() => intervals.value[selectedIntervalIndex.value]);
 
 // Format helpers
 const formatDistance = (meters: number): string => {
@@ -238,7 +250,7 @@ const handleStart = async () => {
 
   // Update tracking config
   mapStore.updateTrackingConfig({
-    minTimeInterval: intervalMinutes.value * 60 * 1000,
+    minTimeInterval: selectedInterval.value.value * 60 * 1000, // convert minutes to ms
     minDistance: minDistance.value
   });
 
@@ -263,7 +275,7 @@ const confirmStop = async () => {
   
   // Reset form
   trackName.value = 'Unbenannte Wanderung';
-  intervalMinutes.value = 1;
+  selectedIntervalIndex.value = 1;
   minDistance.value = 10;
 };
 </script>

@@ -76,9 +76,9 @@
               </div>
               <div class="stat-title">Distanz</div>
               <div class="stat-value text-primary text-lg sm:text-2xl">
-                {{ formatDistance(track.distance || calculateDistance(track)) }}
+                {{ formatDistance(track.totalDistance || calculateDistance(track)) }}
               </div>
-              <div class="stat-desc">{{ track.waypoints.length }} Wegpunkte</div>
+              <div class="stat-desc">{{ track.waypointCount || track.waypoints.length }} Wegpunkte</div>
             </div>
 
             <div class="stat">
@@ -98,10 +98,10 @@
               </div>
               <div class="stat-title">∅ Geschw.</div>
               <div class="stat-value text-accent text-lg sm:text-2xl">
-                {{ formatSpeed(calculateAvgSpeed(track)) }}
+                {{ formatSpeed(track.avgSpeed || calculateAvgSpeed(track)) }}
               </div>
               <div class="stat-desc">
-                Max: {{ formatSpeed(calculateMaxSpeed(track)) }}
+                Max: {{ formatSpeed(track.maxSpeed || calculateMaxSpeed(track)) }}
               </div>
             </div>
           </div>
@@ -161,8 +161,11 @@ import { useRouter } from 'vue-router';
 import VueFeather from 'vue-feather';
 import { db } from '@/db/trackDatabase';
 import type { Track } from '@/db/trackDatabase';
+import { useMapStore } from '@/stores/mapStore';
+import testTrackData from '@/../docs/example_data/Test_1_9e904624.json';
 
 const router = useRouter();
+const mapStore = useMapStore();
 const tracks = ref<Track[]>([]);
 const loading = ref(true);
 const expandedTrack = ref<string | null>(null);
@@ -175,11 +178,17 @@ onMounted(async () => {
 const refreshTracks = async () => {
   loading.value = true;
   try {
-    // Get all tracks, sorted by start time (newest first)
-    tracks.value = await db.tracks
+    // Get all tracks from DB, sorted by start time (newest first)
+    const dbTracks = await db.tracks
       .orderBy('startTime')
       .reverse()
       .toArray();
+    
+    // Add the test track to the list
+    const testTrack = { ...testTrackData, id: 'test-track-01' } as unknown as Track;
+
+    tracks.value = [testTrack, ...dbTracks];
+
     console.log('📋 Loaded tracks:', tracks.value.length);
   } catch (error) {
     console.error('❌ Failed to load tracks:', error);
@@ -192,14 +201,12 @@ const toggleExpand = (trackId: string) => {
   expandedTrack.value = expandedTrack.value === trackId ? null : trackId;
 };
 
-// Distance calculation (Haversine)
+// Distance calculation (Haversine) - only for tracks without pre-calculated distance
 const calculateDistance = (track: Track): number => {
   let totalDistance = 0;
-  
   for (let i = 1; i < track.waypoints.length; i++) {
     const prev = track.waypoints[i - 1];
     const curr = track.waypoints[i];
-    
     if (!prev || !curr) continue;
     
     const R = 6371e3; // Earth radius in meters
@@ -215,67 +222,51 @@ const calculateDistance = (track: Track): number => {
 
     totalDistance += R * c;
   }
-  
   return totalDistance;
 };
 
 const calculateDuration = (track: Track): number => {
-  if (track.endTime) {
-    return track.endTime - track.startTime;
-  }
+  if (track.endTime) return track.endTime - track.startTime;
   return Date.now() - track.startTime;
 };
 
 const calculateAvgSpeed = (track: Track): number => {
-  const distance = track.distance || calculateDistance(track);
+  const distance = track.totalDistance || calculateDistance(track);
   const duration = track.duration || calculateDuration(track);
+  if (duration === 0) return 0;
   return distance / (duration / 1000); // m/s
 };
 
 const calculateMaxSpeed = (track: Track): number => {
-  return Math.max(...track.waypoints.map(w => w.speed || 0));
+  if(track.maxSpeed) return track.maxSpeed;
+  return Math.max(0, ...track.waypoints.map(w => w.speed || 0));
 };
 
 // Formatters
 const formatDate = (timestamp: number): string => {
   return new Date(timestamp).toLocaleDateString('de-DE', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
   });
 };
 
 const formatTime = (timestamp: number): string => {
   return new Date(timestamp).toLocaleTimeString('de-DE', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
   });
 };
 
 const formatTimeRange = (track: Track): string => {
-  const start = new Date(track.startTime).toLocaleTimeString('de-DE', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-  
+  const start = new Date(track.startTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
   if (track.endTime) {
-    const end = new Date(track.endTime).toLocaleTimeString('de-DE', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const end = new Date(track.endTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     return `${start} - ${end}`;
   }
-  
   return `seit ${start}`;
 };
 
 const formatDistance = (meters: number): string => {
-  if (meters < 1000) {
-    return `${meters.toFixed(0)} m`;
-  }
+  if (meters < 1000) return `${meters.toFixed(0)} m`;
   return `${(meters / 1000).toFixed(2)} km`;
 };
 
@@ -283,10 +274,7 @@ const formatDuration = (milliseconds: number): string => {
   const totalSeconds = Math.floor(milliseconds / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
-  
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')} h`;
-  }
+  if (hours > 0) return `${hours}:${minutes.toString().padStart(2, '0')} h`;
   return `${minutes} min`;
 };
 
@@ -297,16 +285,18 @@ const formatSpeed = (metersPerSecond: number): string => {
 
 // Actions
 const viewOnMap = (track: Track) => {
-  // TODO: Implement map view with track overlay
-  console.log('View track on map:', track.id);
+  console.log('🗺️ Showing track on map:', track.name);
+  mapStore.displayTrack(track);
   router.push('/');
 };
 
 const exportGPX = (track: Track) => {
-  // TODO: Implement GPX export
+  // For test data, we don't need export
+  if (track.id === 'test-track-01') {
+    alert('Export für Test-Daten ist nicht implementiert.');
+    return;
+  }
   console.log('Export GPX:', track.name);
-  
-  // Quick JSON export for now
   const json = JSON.stringify(track, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -318,6 +308,10 @@ const exportGPX = (track: Track) => {
 };
 
 const renameTrack = async (track: Track) => {
+  if (track.id === 'test-track-01') {
+    alert('Umbenennen für Test-Daten ist nicht implementiert.');
+    return;
+  }
   const newName = prompt('Neuer Name:', track.name);
   if (newName && newName !== track.name) {
     try {
@@ -331,6 +325,10 @@ const renameTrack = async (track: Track) => {
 };
 
 const deleteTrack = async (trackId: string) => {
+  if (trackId === 'test-track-01') {
+    alert('Löschen für Test-Daten ist nicht implementiert.');
+    return;
+  }
   if (!confirm('Wanderung wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
     return;
   }
