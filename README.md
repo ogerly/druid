@@ -1,4 +1,3 @@
-
 # 🌳 DRUID - Rediscover Ancient Paths
 
 **DRUID ist eine moderne Web-Anwendung, die dich einlädt, die verborgenen Pfade und vergessenen Orte der keltischen und vorchristlichen Geschichte neu zu entdecken. Die App ist als mobiler Begleiter konzipiert, der digitale Kartentechnologie mit dem Wunsch verbindet, wieder in die Natur und die Geschichte einzutauchen.**
@@ -15,7 +14,11 @@ Der Name **DRUID** wurde gewählt, um eine breite Zielgruppe anzusprechen und di
 
 *   **Mobile-First Design:** Eine intuitive Benutzeroberfläche, die für die Nutzung unterwegs optimiert ist.
 *   **Interaktive Karte:** Das Herzstück der App, basierend auf Leaflet.js, zeigt deine Position und POIs in der Nähe an.
-*   **Weg-Aufzeichnung:** Zeichne deine eigenen Wanderungen und Pfade auf, speichere sie und füge Notizen hinzu.
+*   **GPS-Tracking für Wanderungen:**
+    *   **Aufzeichnen & Speichern:** Zeichne deine Routen präzise auf und speichere sie sicher und lokal auf deinem Gerät.
+    *   **Track-Visualisierung:** Lass dir deine gespeicherten Wanderungen als Route auf der interaktiven Karte anzeigen.
+    *   **Anpassbares Intervall:** Wähle das Aufzeichnungsintervall (von 30s bis 5min), um die Genauigkeit an deine Umgebung anzupassen (z.B. kürzer in der Stadt, länger im offenen Gelände).
+    *   **Live-Statistiken:** Verfolge während der Aufzeichnung deine aktuelle Distanz, Dauer und die Anzahl der Wegpunkte.
 *   **Points of Interest (POIs):** Entdecke eine kuratierte Datenbank historischer und mythischer Orte, unterteilt in Kategorien:
     *   **Archäologisch:** Verifizierte historische Stätten.
     *   **Rekonstruiert:** Orte mit wiederaufgebauten Strukturen.
