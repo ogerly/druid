@@ -100,7 +100,7 @@ html, body {
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow: hidden; /* Verhindert Scrollen auf Body-Ebene */
 }
 
 body {
@@ -142,10 +142,10 @@ body {
 /* Main Content Area */
 main {
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto; /* Erlaubt vertikales Scrollen für lange Inhalte */
   position: relative;
   width: 100%;
-  min-height: 0; /* Wichtig für flex-child */
+  min-height: 0; /* Wichtig für Flexbox-Kinder, um korrekte Größe zu haben */
 }
 
 /* Bottom Navigation */
