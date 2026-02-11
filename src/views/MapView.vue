@@ -257,25 +257,15 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* Map Container */
 .w-full.h-full {
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  touch-action: pan-x pan-y;
-  z-index: 1;
 }
 
-/* Relative wrapper for floating elements */
 .relative {
   position: relative;
 }
 
-/* Leaflet Container muss auch 100% sein */
 :deep(.leaflet-container) {
   width: 100%;
   height: 100%;
