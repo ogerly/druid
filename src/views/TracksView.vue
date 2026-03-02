@@ -165,7 +165,6 @@ import { db } from '@/db/trackDatabase';
 import type { Track } from '@/db/trackDatabase';
 import { useMapStore } from '@/stores/mapStore';
 import { useMapboxSnap } from '@/composables/useMapboxSnap';
-import testTrackData from '@/../docs/example_data/Test_1_9e904624.json';
 
 const router = useRouter();
 const mapStore = useMapStore();
@@ -183,12 +182,28 @@ onMounted(async () => {
 const refreshTracks = async () => {
   loadingTracks.value = true;
   try {
+    // Fetch test track from public folder
+    const response = await fetch('/data/Test_1_9e904624.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const testTrackData = await response.json();
+    const testTrack = { ...testTrackData, id: 'test-track-01' } as Track;
+
+    // Fetch real tracks from DB
     const dbTracks = await db.tracks.orderBy('startTime').reverse().toArray();
-    const testTrack = { ...testTrackData, id: 'test-track-01' } as unknown as Track;
+    
     tracks.value = [testTrack, ...dbTracks];
     console.log('📋 Loaded tracks:', tracks.value.length);
+
   } catch (error) {
     console.error('❌ Failed to load tracks:', error);
+    // If fetching test data fails, still try to load from DB
+    try {
+      tracks.value = await db.tracks.orderBy('startTime').reverse().toArray();
+    } catch (dbError) {
+      console.error('❌ Failed to load tracks from DB as well:', dbError);
+    }
   } finally {
     loadingTracks.value = false;
   }
@@ -215,7 +230,6 @@ const handleSnapTrack = async (track: Track) => {
     router.push('/');
   } else {
     console.error('Failed to snap track.');
-    // Optional: show a user-facing error message
   }
 };
 
@@ -252,7 +266,6 @@ const deleteTrack = async (trackId: string) => {
 };
 
 // --- Formatters & Calculations ---
-// (Hier bleiben die ganzen Helferfunktionen, die unverändert sind)
 const formatDate = (timestamp: number) => new Date(timestamp).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 const formatTime = (timestamp: number) => new Date(timestamp).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 const formatDistance = (meters: number) => meters < 1000 ? `${meters.toFixed(0)} m` : `${(meters / 1000).toFixed(2)} km`;
@@ -272,9 +285,9 @@ const formatTimeRange = (track: Track) => {
 };
 
 // Fallback calculations if not pre-calculated
-const calculateDistance = (track: Track) => { /* ... unverändert ... */ return 0; };
+const calculateDistance = (_track: Track) => 0;
 const calculateDuration = (track: Track) => track.endTime ? track.endTime - track.startTime : Date.now() - track.startTime;
-const calculateAvgSpeed = (track: Track) => { /* ... unverändert ... */ return 0; };
+const calculateAvgSpeed = (_track: Track) => 0;
 const calculateMaxSpeed = (track: Track) => Math.max(0, ...track.waypoints.map(w => w.speed || 0));
 </script>
 

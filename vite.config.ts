@@ -4,6 +4,7 @@ import { fileURLToPath, URL } from 'url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/druid/', // This is the base path for GitHub Pages
   plugins: [vue()],
   resolve: {
     alias: {
