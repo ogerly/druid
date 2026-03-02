@@ -1,9 +1,14 @@
 <template>
-  <div class="drawer lg:drawer-open app-container">
+  <div v-if="auth.loading" class="h-screen w-screen flex justify-center items-center">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+
+  <div v-else class="drawer lg:drawer-open app-container">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" v-model="isSidebarOpen" />
     <div class="drawer-content">
       <!-- Navbar immer sichtbar mit bedingten Controls -->
       <TheNavbar 
+        v-if="auth.user" 
         :show-map-controls="showMapControls"
         :show-settings-control="showSettingsControl"
         @center-on-user="handleCenterOnUser"
@@ -17,7 +22,7 @@
       </main>
       
       <!-- Mobile Bottom Dock Navigation -->
-      <div class="btm-nav lg:hidden">
+      <div v-if="auth.user" class="btm-nav lg:hidden">
         <button 
           v-for="link in navLinks" 
           :key="link.name"
@@ -31,7 +36,7 @@
     </div>
     
     <!-- Desktop Sidebar -->
-    <div class="drawer-side z-40">
+    <div v-if="auth.user" class="drawer-side z-40">
       <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
       <TheSidebar @close="closeSidebar" />
     </div>
@@ -39,24 +44,33 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useMapStore } from './stores/mapStore';
+import { useAuthStore } from './stores/authStore';
 import TheNavbar from './components/layout/TheNavbar.vue';
 import TheSidebar from './components/layout/TheSidebar.vue';
 import VueFeather from 'vue-feather';
 import { navLinks } from './config/navigation';
 
-/**
- * ⚠️ WICHTIG: Navigation-Links werden aus @/config/navigation.ts importiert!
- * Änderungen an der Navigation NUR DORT vornehmen.
- */
-
 const router = useRouter();
 const route = useRoute();
 const mapStore = useMapStore();
+const auth = useAuthStore();
+
 const isSidebarOpen = ref(false);
 const showTrackingPanel = ref(false);
+
+// Wenn der Auth-Status sich ändert, handle die Weiterleitung
+watch(() => auth.user, (newUser) => {
+  if (!auth.loading) { // Nur weiterleiten, wenn der Ladevorgang abgeschlossen ist
+    if (!newUser && route.path !== '/login') {
+      router.push('/login');
+    } else if (newUser && route.path === '/login') {
+      router.push('/'); // Nach erfolgreichem Login zur Hauptseite
+    }
+  }
+}, { immediate: true });
 
 // Navbar immer anzeigen, aber mit unterschiedlichen Controls
 const isMapRoute = computed(() => route.path === '/');
@@ -91,6 +105,7 @@ const handleClearPath = () => {
 </script>
 
 <style>
+/* ... Bestehende Styles bleiben unverändert ... */
 * {
   box-sizing: border-box;
 }

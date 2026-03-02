@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { db, type Track } from '../db/trackDatabase';
-import { TrackingEngine, type TrackingConfig, defaultTrackingConfig } from '../services/trackingEngine';
+import {
+  TrackingEngine,
+  type TrackingConfig,
+  defaultTrackingConfig,
+} from '../services/trackingEngine';
 import { wakeLockManager } from '../utils/wakeLock';
 
 // Erweiterte Interfaces mit Metadaten
@@ -25,7 +29,7 @@ export const useMapStore = defineStore('map', () => {
   const center = ref<[number, number]>([51.1657, 10.4515]); // Germany center
   const zoom = ref(6);
   const selectedPoiId = ref<string | null>(null);
-  
+
   // GPS & Recording
   const userLocation = ref<[number, number] | null>(null);
   const isRecording = ref(false);
@@ -35,13 +39,16 @@ export const useMapStore = defineStore('map', () => {
 
   // Track display
   const trackToDisplay = ref<Track | null>(null);
-  
+  const snappedTrackPolyline = ref<[number, number][] | null>(null);
+  const originalTrackForSnapped = ref<Track | null>(null);
+
+
   // New: Advanced Tracking
   const activeTrack = ref<Track | null>(null);
   const trackingConfig = ref<TrackingConfig>({ ...defaultTrackingConfig });
   const trackingEngine = new TrackingEngine(trackingConfig.value);
   let gpsWatchId: number | null = null;
-  
+
   // Computed: Live statistics
   const liveStats = computed(() => {
     if (!activeTrack.value) {
@@ -49,7 +56,7 @@ export const useMapStore = defineStore('map', () => {
     }
     return db.calculateStats(activeTrack.value);
   });
-  
+
   let nextPathId = 1;
   let nextMarkerId = 1;
 
@@ -72,9 +79,21 @@ export const useMapStore = defineStore('map', () => {
   };
 
   const displayTrack = (track: Track) => {
+    snappedTrackPolyline.value = null;
+    originalTrackForSnapped.value = null;
     trackToDisplay.value = track;
   };
-  
+
+  const displaySnappedTrack = (
+    polyline: [number, number][],
+    originalTrack: Track
+  ) => {
+    trackToDisplay.value = null; // Hide original track line
+    snappedTrackPolyline.value = polyline;
+    originalTrackForSnapped.value = originalTrack;
+  };
+
+
   // GPS Functions
   const centerOnUser = async () => {
     return new Promise<void>((resolve, reject) => {
@@ -98,12 +117,12 @@ export const useMapStore = defineStore('map', () => {
         {
           enableHighAccuracy: true,
           timeout: 15000, // 15 Sekunden für Mobile
-          maximumAge: 0
+          maximumAge: 0,
         }
       );
     });
   };
-  
+
   // Recording Functions - LEGACY (kompatibel mit altem Code)
   const toggleRecording = () => {
     if (isRecording.value) {
@@ -112,42 +131,46 @@ export const useMapStore = defineStore('map', () => {
         savedPaths.value.push({
           id: nextPathId++,
           points: [...currentPath.value],
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
         currentPath.value = [];
       }
     }
     isRecording.value = !isRecording.value;
   };
-  
+
   // New: Advanced Tracking Functions
   const startTracking = async (trackName: string = 'Unbenannte Wanderung') => {
     try {
       // Create new track in IndexedDB
       activeTrack.value = await db.createTrack(trackName);
-      
+
       // Reset tracking engine
       trackingEngine.reset();
       trackingEngine.updateConfig(trackingConfig.value);
-      
+
       // Request wake lock
       await wakeLockManager.request();
-      
+
       // Start GPS watch
       gpsWatchId = navigator.geolocation.watchPosition(
         async (position) => {
           // Update user location for map
-          userLocation.value = [position.coords.latitude, position.coords.longitude];
-          
+          userLocation.value = [
+            position.coords.latitude,
+            position.coords.longitude,
+          ];
+
           // Check if waypoint should be saved
           if (trackingEngine.shouldSaveWaypoint(position)) {
             const waypoint = trackingEngine.createWaypoint(position);
-            
+
             // Save to IndexedDB
             if (activeTrack.value) {
               await db.addWaypoint(activeTrack.value.id, waypoint);
               // Update activeTrack to trigger reactivity
-              activeTrack.value = await db.tracks.get(activeTrack.value.id) || null;
+              activeTrack.value =
+                (await db.tracks.get(activeTrack.value.id)) || null;
             }
           }
         },
@@ -157,85 +180,87 @@ export const useMapStore = defineStore('map', () => {
         {
           enableHighAccuracy: true,
           timeout: 15000,
-          maximumAge: 0
+          maximumAge: 0,
         }
       );
-      
+
       isRecording.value = true;
       console.log('✅ Tracking started:', activeTrack.value.id);
-      
     } catch (error: any) {
       console.error('[Tracking] Failed to start:', error.message);
       throw error;
     }
   };
-  
+
   const stopTracking = async () => {
     if (!activeTrack.value) return;
-    
+
     try {
       // Stop GPS watch
       if (gpsWatchId !== null) {
         navigator.geolocation.clearWatch(gpsWatchId);
         gpsWatchId = null;
       }
-      
+
       // Release wake lock
       await wakeLockManager.release();
-      
+
       // Calculate final stats
       const stats = db.calculateStats(activeTrack.value);
-      
+
       // Mark track as completed
       await db.completeTrack(activeTrack.value.id, stats);
-      
+
       console.log('✅ Tracking stopped. Stats:', stats);
-      
+
       // Reset state
       activeTrack.value = null;
       isRecording.value = false;
       trackingEngine.reset();
-      
     } catch (error: any) {
       console.error('[Tracking] Failed to stop:', error.message);
     }
   };
-  
+
   const pauseTracking = async () => {
     if (!activeTrack.value) return;
-    
+
     // Stop GPS watch
     if (gpsWatchId !== null) {
       navigator.geolocation.clearWatch(gpsWatchId);
       gpsWatchId = null;
     }
-    
+
     // Release wake lock
     await wakeLockManager.release();
-    
+
     // Mark as paused in DB
     await db.pauseTrack(activeTrack.value.id);
-    
+
     isRecording.value = false;
   };
-  
+
   const resumeTracking = async () => {
     if (!activeTrack.value) return;
-    
+
     // Resume wake lock
     await wakeLockManager.request();
-    
+
     // Resume GPS watch
     gpsWatchId = navigator.geolocation.watchPosition(
       async (position) => {
-        userLocation.value = [position.coords.latitude, position.coords.longitude];
-        
+        userLocation.value = [
+          position.coords.latitude,
+          position.coords.longitude,
+        ];
+
         if (trackingEngine.shouldSaveWaypoint(position)) {
           const waypoint = trackingEngine.createWaypoint(position);
-          
+
           if (activeTrack.value) {
             await db.addWaypoint(activeTrack.value.id, waypoint);
-            activeTrack.value = await db.tracks.get(activeTrack.value.id) || null;
+            activeTrack.value =
+              (await db.tracks.get(activeTrack.value.id)) || null;
           }
         }
       },
@@ -243,32 +268,35 @@ export const useMapStore = defineStore('map', () => {
       {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 0
+        maximumAge: 0,
       }
     );
-    
+
     // Mark as recording in DB
     await db.resumeTrack(activeTrack.value.id);
-    
+
     isRecording.value = true;
   };
-  
+
   const updateTrackingConfig = (config: Partial<TrackingConfig>) => {
     trackingConfig.value = { ...trackingConfig.value, ...config };
     trackingEngine.updateConfig(trackingConfig.value);
   };
-  
+
   const addPointToPath = (point: [number, number]) => {
     if (isRecording.value) {
       currentPath.value.push(point);
     }
   };
-  
+
   const clearPath = () => {
     currentPath.value = [];
     isRecording.value = false;
+    trackToDisplay.value = null;
+    snappedTrackPolyline.value = null;
+    originalTrackForSnapped.value = null;
   };
-  
+
   // Marker Functions - Erweitert mit Metadaten
   const addUserMarker = (
     position: [number, number],
@@ -282,22 +310,22 @@ export const useMapStore = defineStore('map', () => {
       label,
       description,
       timestamp: Date.now(),
-      category: category || 'personal'
+      category: category || 'personal',
     });
   };
-  
+
   const updateUserMarker = (
     id: number,
     updates: Partial<Omit<UserMarker, 'id' | 'timestamp'>>
   ) => {
-    const marker = userMarkers.value.find(m => m.id === id);
+    const marker = userMarkers.value.find((m) => m.id === id);
     if (marker) {
       Object.assign(marker, updates);
     }
   };
-  
+
   const removeUserMarker = (id: number) => {
-    const index = userMarkers.value.findIndex(m => m.id === id);
+    const index = userMarkers.value.findIndex((m) => m.id === id);
     if (index !== -1) {
       userMarkers.value.splice(index, 1);
     }
@@ -314,6 +342,8 @@ export const useMapStore = defineStore('map', () => {
     userMarkers,
     // Track display
     trackToDisplay,
+    snappedTrackPolyline,
+    originalTrackForSnapped,
     // New: Advanced tracking
     activeTrack,
     trackingConfig,
@@ -323,6 +353,7 @@ export const useMapStore = defineStore('map', () => {
     selectPoi,
     clearSelection,
     displayTrack,
+    displaySnappedTrack,
     centerOnUser,
     toggleRecording, // Legacy
     addPointToPath,
