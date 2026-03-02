@@ -60,19 +60,16 @@
 
 ## 4. Hosting & Deployment
 
-### Phase 1: Statisches Frontend (Abgeschlossen)
+### Phase 1: Statisches Frontend (Veraltet)
 
 - **Plattform:** GitHub Pages
-- **Status:** Erfolgreich deployed.
-- **Prozess:** Ein `deploy`-Skript in `package.json` (`gh-pages -d dist`) baut die Anwendung und veröffentlicht den `dist`-Ordner auf dem `gh-pages`-Branch.
-- **Konfiguration:** `vite.config.ts` ist mit `base: '/druid/'` für das Deployment in einem Unterverzeichnis konfiguriert.
+- **Status:** Abgelöst durch Vercel.
 
-### Phase 2: Full-Stack-Anwendung (In Arbeit)
+### Phase 2: Full-Stack-Anwendung (Aktiv)
 
 - **Plattform:** Vercel
+- **Live-URL:** [**https://druid-five.vercel.app**](https://druid-five.vercel.app)
+- **Status:** **Erfolgreich deployed.**
+- **Prozess:** Jeder Push auf die `main`-Branch löst automatisch ein neues Build- und Deployment-Verfahren auf Vercel aus. Die Plattform baut das Vite-Projekt und stellt das Ergebnis unter der primären Domain bereit.
 - **Ziel:** Hosting der Vue.js-Frontend-Anwendung zusammen mit einem serverlosen Node.js-Backend zur Nutzung von sicheren API-Schlüsseln (z.B. für Supabase).
-- **Aktueller Stand:**
-    - Ein Vercel-Projekt wurde für das `druid`-GitHub-Repository erstellt.
-    - **Problem:** Das initiale Deployment auf Vercel ist fehlgeschlagen.
-    - **Grund:** Der Build-Prozess auf Vercel ist auf denselben TypeScript-Fehler (`TS2307: Cannot find module`) gestoßen, der zuvor lokal aufgetreten ist. Dies liegt daran, dass der `main`-Branch auf GitHub die letzten Korrekturen (Umstellung von JSON-Import auf `fetch`) noch nicht enthält.
-- **Nächster Schritt:** Die lokalen, funktionierenden Code-Änderungen müssen in die `main`-Branch auf GitHub gepusht werden. Anschließend wird das Deployment auf Vercel automatisch neu angestoßen und sollte erfolgreich sein.
+- **Nächster Schritt:** Aufbau des `/api`-Backends auf Vercel, Einrichten der Environment Variables (Secrets) und Implementierung der ersten sicheren Serverless-Funktion.
