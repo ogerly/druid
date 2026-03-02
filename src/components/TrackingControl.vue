@@ -67,7 +67,8 @@
         <div class="form-control mb-4">
           <label class="label">
             <span class="label-text">Wegpunkt-Intervall</span>
-            <span class="label-text-alt">{{ selectedInterval.label }}</span>
+            <!-- FIX: Use optional chaining to prevent crash if undefined -->
+            <span class="label-text-alt">{{ selectedInterval?.label }}</span>
           </label>
           <input
             v-model.number="selectedIntervalIndex"
@@ -247,6 +248,13 @@ const closeStopModal = () => {
 // Actions
 const handleStart = async () => {
   closeSettingsModal();
+
+  // FIX: Add a guard clause to ensure selectedInterval is defined
+  if (!selectedInterval.value) {
+    console.error('❌ Selected interval is undefined. Cannot start tracking.');
+    alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+    return;
+  }
 
   // Update tracking config
   mapStore.updateTrackingConfig({

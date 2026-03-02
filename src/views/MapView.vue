@@ -3,26 +3,37 @@ import { ref, onMounted, nextTick, watch, onUnmounted } from 'vue';
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from "@vue-leaflet/vue-leaflet";
 import { useMapStore, type Track } from '@/stores/mapStore';
-import { usePoisStore } from '@/stores/poisStore';
+// import { usePoisStore } from '@/stores/poisStore'; // Removed, was unused
 import MarkerFormModal from '@/components/MarkerFormModal.vue';
 import TrackingControl from '@/components/TrackingControl.vue';
 import L from 'leaflet';
+
+// FIX: Import Leaflet's default icon assets to prevent build errors
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
 const props = defineProps({
   showTrackingPanel: Boolean
 });
 
 const mapStore = useMapStore();
-const poisStore = usePoisStore();
 
 const mapComponent = ref<any>(null);
 const markerFormModal = ref<InstanceType<typeof MarkerFormModal> | null>(null);
 const pendingMarkerPosition = ref<[number, number] | null>(null);
 
-// Custom icon for user location
-const userLocationIcon = new L.Icon({ /* ... icon config ... */ });
-// Custom icon for user markers
-const userMarkerIcon = new L.Icon({ /* ... icon config ... */ });
+// FIX: Correctly define the icon object with explicit properties to satisfy IconOptions
+const userLocationIcon = L.icon({
+  iconUrl: iconUrl,
+  iconRetinaUrl: iconRetinaUrl,
+  shadowUrl: shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
 
 // Handle map clicks
 const onMapClick = (event: any) => {
@@ -46,7 +57,7 @@ const handleMarkerCancel = () => {
   pendingMarkerPosition.value = null;
 };
 
-const formatDate = (timestamp: number) => new Date(timestamp).toLocaleString('de-DE', { /* ... format options ... */ });
+// Removed formatDate function, was unused
 
 const flyToTrackBounds = (track: Track) => {
   if (!track || track.waypoints.length === 0 || !mapComponent.value) return;

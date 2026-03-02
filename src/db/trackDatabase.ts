@@ -11,21 +11,27 @@ export interface Waypoint {
   speed?: number;
 }
 
-// Track interface
+// Track interface - NOW WITH OPTIONAL STATS
 export interface Track {
   id: string;
   name: string;
   startTime: number;
   endTime?: number;
   waypoints: Waypoint[];
-  distance?: number;
-  duration?: number;
   status: 'recording' | 'completed' | 'paused';
   createdAt: number;
   updatedAt: number;
+
+  // Optional, pre-calculated or live-calculated stats
+  totalDistance?: number;
+  duration?: number;
+  waypointCount?: number;
+  avgSpeed?: number;
+  maxSpeed?: number;
+  elevationGain?: number;
 }
 
-// Track statistics
+// Track statistics (still useful for calculation results)
 export interface TrackStats {
   totalDistance: number;
   duration: number;

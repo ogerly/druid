@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import type { Track, Waypoint } from '@/db/trackDatabase';
+import type { Track } from '@/db/trackDatabase'; // FIX: Removed unused 'Waypoint' import
 
 // --- WICHTIG: Mapbox Access Token ---
 // Hol dir deinen kostenlosen Token von https://www.mapbox.com/
@@ -65,14 +65,21 @@ export function useMapboxSnap() {
       const response = await fetch(url);
       const data: MapboxMatchResponse = await response.json();
 
-      if (data.code !== 'Ok' || !data.matchings || data.matchings.length === 0) {
-        throw new Error(`Mapbox API Fehler: ${data.code}`);
+      // FIX: More robust checking to satisfy TypeScript and prevent runtime errors
+      if (data.code !== 'Ok') {
+        throw new Error(`Mapbox API Fehler: ${data.code || 'Antwort-Code nicht OK'}`);
       }
 
-      console.log(`✅ Erfolgreiche Antwort von Mapbox erhalten. Konfidenz: ${data.matchings[0].confidence.toFixed(2)}`);
+      const firstMatching = data.matchings?.[0];
+
+      if (!firstMatching) {
+        throw new Error('Mapbox API hat keine passenden Routen zurückgegeben.');
+      }
+
+      console.log(`✅ Erfolgreiche Antwort von Mapbox erhalten. Konfidenz: ${firstMatching.confidence.toFixed(2)}`);
       
       // Die Geometrie enthält [lng, lat], wir müssen es für Leaflet in [lat, lng] umwandeln
-      const snappedWaypoints: [number, number][] = data.matchings[0].geometry.coordinates.map(
+      const snappedWaypoints: [number, number][] = firstMatching.geometry.coordinates.map(
         ([lng, lat]) => [lat, lng]
       );
       
