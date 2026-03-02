@@ -2,8 +2,8 @@
   "name": "DRUID - Discover Ancient Sites",
   "short_name": "DRUID",
   "description": "Heritage Discovery & GPS Tracking - Entdecke archäologische Stätten und zeichne deine Wanderwege auf",
-  "start_url": "/druid/",
-  "scope": "/druid/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#16213e",
@@ -11,49 +11,49 @@
   "categories": ["travel", "navigation", "utilities"],
   "icons": [
     {
-      "src": "/druid/icons/icon-72.png",
+      "src": "/icons/icon-72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/druid/icons/icon-96.png",
+      "src": "/icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/druid/icons/icon-128.png",
+      "src": "/icons/icon-128.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/druid/icons/icon-144.png",
+      "src": "/icons/icon-144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/druid/icons/icon-152.png",
+      "src": "/icons/icon-152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/druid/icons/icon-192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/druid/icons/icon-384.png",
+      "src": "/icons/icon-384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/druid/icons/icon-512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -61,7 +61,7 @@
   ],
   "screenshots": [
     {
-      "src": "/druid/screenshots/map-view.png",
+      "src": "/screenshots/map-view.png",
       "sizes": "540x720",
       "type": "image/png",
       "form_factor": "narrow"
@@ -72,10 +72,10 @@
       "name": "Start Tracking",
       "short_name": "Track",
       "description": "Starte GPS-Tracking für Wanderung",
-      "url": "/druid/map?action=start-tracking",
+      "url": "/map?action=start-tracking",
       "icons": [
         {
-          "src": "/druid/icons/icon-192.png",
+          "src": "/icons/icon-192.png",
           "sizes": "192x192"
         }
       ]

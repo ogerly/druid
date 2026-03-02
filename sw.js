@@ -4,9 +4,9 @@ const RUNTIME_CACHE = 'druid-runtime';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
-  '/druid/',
-  '/druid/index.html',
-  '/druid/manifest.json'
+  '/',
+  '/index.html',
+  '/manifest.json'
 ];
 
 // Leaflet tile URL pattern
@@ -128,7 +128,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() => {
         // Fallback for navigation requests
         if (request.mode === 'navigate') {
-          return caches.match('/druid/index.html');
+          return caches.match('/index.html');
         }
       })
   );
