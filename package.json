@@ -21,8 +21,10 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.45.0",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^24.10.1",
+    "@vercel/node": "^3.2.3",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/tsconfig": "^0.8.1",
     "autoprefixer": "^10.4.19",
