@@ -17,7 +17,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // Use different SW for dev vs production
     const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const base = isDev ? '/' : '/druid/';
+    const base = '/'; // Correct base path for both dev and prod
     const swFile = isDev ? 'sw.dev.js' : 'sw.js';
     const swPath = `${base}${swFile}`;
     
