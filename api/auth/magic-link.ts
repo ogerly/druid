@@ -36,8 +36,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     const { data, error } = await supabase.auth.signInWithOtp({
       email: email,
       options: {
-        // Die URL, zu der der Benutzer nach dem Klick auf den Link weitergeleitet wird.
-        emailRedirectTo: new URL('/', req.headers.origin || 'https://druid-five.vercel.app').toString(),
+        // Hard-codierte Weiterleitung zur Produktions-URL
+        emailRedirectTo: 'https://druid-five.vercel.app/login',
       },
     });
 
