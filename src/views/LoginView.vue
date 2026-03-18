@@ -37,11 +37,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { supabase } from '../lib/supabaseClient'; // KORREKTER IMPORT
+import { ref } from 'vue';
 
-const router = useRouter();
 const email = ref('');
 const loading = ref(false);
 const message = ref('');
@@ -76,19 +73,8 @@ const handleLogin = async () => {
   }
 };
 
-// Lifecycle hook, der ausgeführt wird, wenn die Komponente geladen wird.
-onMounted(() => {
-  // Lausche auf Änderungen des Authentifizierungsstatus.
-  supabase.auth.onAuthStateChange((event, session) => {
-    // Das 'SIGNED_IN'-Event wird ausgelöst, nachdem der Benutzer
-    // auf den Magic Link geklickt hat und zur App zurückkehrt.
-    if (event === 'SIGNED_IN') {
-      console.log('✅ User signed in, redirecting...');
-      // Leite den Benutzer zur Hauptansicht (oder einer anderen geschützten Seite) weiter.
-      router.push('/');
-    }
-  });
-});
+// KEINE onMounted-Logik hier. Das wird jetzt global in App.vue gehandhabt.
+
 </script>
 
 <style scoped>
