@@ -1,55 +1,70 @@
 # Druid Application Blueprint
 
-## 1. Overview
+## 1. Zweck & Funktionen
 
-Druid is a modern, map-centric web application designed for tracking, managing, and visualizing personal points of interest (POIs) and movement tracks. It leverages a Vue.js frontend, a Supabase backend for authentication and data storage, and is hosted on Vercel. The application is designed to be fully responsive and provide a seamless user experience on both desktop and mobile devices.
+Druid ist eine moderne, karten-zentrierte Webanwendung, die für das Tracking, die Verwaltung und die Visualisierung von persönlichen Sonderzielen (Points of Interest, POIs) und Bewegungsprofilen konzipiert wurde. Die Anwendung nutzt ein Vue.js-Frontend, ein Supabase-Backend für Authentifizierung sowie Datenspeicherung und wird auf Vercel gehostet. Die App ist vollständig responsiv, um eine nahtlose Benutzererfahrung auf Desktop- und Mobilgeräten zu gewährleisten.
 
-## 2. Core Features & Design
+## 2. Kernfunktionen & Design
 
-### Style & Design Philosophy
-- **Modern & Bold:** The UI uses modern components, a visually balanced layout with clean spacing, and polished styles.
-- **Color Palette:** A vibrant and energetic color palette is used to create a visually engaging experience.
-- **Typography:** Expressive and relevant typography is used to create a clear visual hierarchy.
-- **Iconography:** Icons are used to enhance user understanding and navigation.
-- **Interactivity:** Interactive elements have a "glow" effect and shadows to create a sense of depth and interactivity.
+### Stil- & Designphilosophie
 
-### Implemented Features
-- **Map-centric Interface:** The core of the application is an interactive map (using Mapbox).
-- **User Authentication:** Secure user sign-up and login via passwordless magic links, handled by Supabase Auth.
-- **Real-time Data:** Data is fetched and managed in real-time.
-- **POI Management:** Users can create, view, update, and delete personal points of interest on the map.
-- **GPS Tracking:** The application can track the user's location and save it as a track.
-- **PWA Ready:** The application is a Progressive Web App (PWA) with a service worker for offline capabilities.
-- **Responsive Design:** The layout adapts to various screen sizes.
-- **Routing:** Client-side routing is handled by Vue Router.
+- **Modern & Klar:** Die Benutzeroberfläche verwendet moderne Komponenten, ein visuell ausgewogenes Layout und ausgefeilte Stile.
+- **Farbpalette:** Eine lebendige und energiegeladene Farbpalette schafft ein visuell ansprechendes Erlebnis.
+- **Typografie:** Ausdrucksstarke Typografie wird verwendet, um eine klare visuelle Hierarchie zu schaffen.
+- **Ikonografie:** Icons verbessern das Verständnis und die Navigation.
+- **Interaktivität:** Interaktive Elemente haben einen "Glow"-Effekt und Schatten, um ein Gefühl von Tiefe zu erzeugen.
 
-## 3. Architecture & Technology Stack
+### Implementierte Features
 
-- **Frontend:** Vue.js 3 with Composition API and `<script setup>`
-- **State Management:** Pinia
+- **Karten-zentrierte Oberfläche:** Das Herzstück ist eine interaktive Karte (Mapbox).
+- **Benutzerauthentifizierung:** Sichere, passwortlose Anmeldung und Registrierung über Magic Links, die von Supabase Auth verwaltet werden. Dieses System ist vollständig implementiert und funktionsfähig.
+- **Echtzeit-Daten:** Daten werden in Echtzeit abgerufen und verwaltet.
+- **GPS-Tracking & Pfad-Management:** Die Anwendung kann den Standort des Benutzers verfolgen und als Pfad speichern.
+- **Responsive Design:** Das Layout passt sich an verschiedene Bildschirmgrößen an.
+- **Routing:** Das clientseitige Routing wird von Vue Router übernommen.
+
+## 3. Architektur & Technologie-Stack
+
+- **Frontend:** Vue.js 3 mit Composition API und `<script setup>`
+- **State Management:** Pinia (globale Stores für Authentifizierung und Kartendaten)
 - **Routing:** Vue Router
-- **Build Tool:** Vite
+- **Build-Tool:** Vite
 - **Backend-as-a-Service (BaaS):** Supabase
-    - **Authentication:** Supabase Auth (Magic Links)
-    - **Database:** Supabase (PostgreSQL)
-- **Hosting:** Vercel (with Serverless Functions for backend logic)
-- **Mapping:** Mapbox GL JS
+    - **Authentifizierung:** Supabase Auth (Magic Links)
+    - **Datenbank:** Supabase (PostgreSQL)
+- **Hosting:** Vercel
+- **Serverless-Funktionen:** Vercel Functions für sichere Backend-Logik (z.B. Magic-Link-Anforderung).
+- **Kartografie:** Mapbox GL JS
 
-## 4. Current Goal: Fixing the Post-Login Redirect
+## 4. Implementierungs-Log: Magic-Link-Authentifizierung
 
-**The Problem:**
-After a user clicks the magic link in their email, they are successfully authenticated by Supabase. The browser is then redirected to `https://druid-five.vercel.app/login` with the authentication tokens (access_token, refresh_token, etc.) included as URL fragments (`#`). However, the Vue application on the `/login` page is not detecting this token and is not transitioning the user to an authenticated state (i.e., redirecting to the main map view). The user remains on the login page, even though they are technically authenticated in the URL.
+Dieser Abschnitt dokumentiert den Prozess und die wichtigsten Entscheidungen bei der Implementierung des Authentifizierungssystems.
 
-**The Plan:**
-The `LoginView.vue` component needs to be updated. When the component mounts, it must check the URL for the presence of an authentication token fragment. If a token is found, it should:
-1.  Use the Supabase client library to set the user's session based on the token from the URL.
-2.  Once the session is set and the user is confirmed to be logged in, redirect the user from the `/login` page to the main application view (e.g., `/`).
-3.  This check should happen automatically as soon as the `LoginView` component is loaded.
+**Ziel:** Eine sichere, passwortlose Authentifizierung mittels "Magic Links" über Supabase zu realisieren.
 
-**Action Steps:**
-1.  Read the content of `src/views/LoginView.vue`.
-2.  Modify the `<script setup>` section to include logic that runs on component mount (`onMounted`).
-3.  Inside `onMounted`, add the Supabase `onAuthStateChange` listener. This is the standard way to handle logins via redirect. Supabase's library will automatically parse the URL fragment, set the session, and trigger the `SIGNED_IN` event.
-4.  Inside the `onAuthStateChange` callback, when a `SIGNED_IN` event occurs, use Vue Router to programmatically navigate the user to the home/map page (`router.push('/')`).
-5.  Write the updated content back to `src/views/LoginView.vue`.
-6.  Commit and push the changes for a new deployment.
+**1. Backend API (`/api/auth/magic-link`):**
+- Es wurde eine Vercel Serverless-Funktion erstellt, um Anmeldeanfragen sicher zu verarbeiten.
+- Diese Funktion empfängt die E-Mail des Benutzers, verwendet den serverseitigen Supabase-Admin-Client und ruft die `signInWithOtp`-Methode auf.
+- **Architekturentscheidung:** Die `emailRedirectTo`-Option wurde explizit auf die Login-Seite der Produktions-URL (`https://druid-five.vercel.app/login`) gesetzt. Dies ist eine entscheidende Sicherheitsmaßnahme, die Supabase mitteilt, wohin der Benutzer nach dem Klick auf den Link geleitet werden soll.
+- **Sicherheit:** Der Supabase Admin Client verwendet den `SUPABASE_SERVICE_ROLE_KEY`, der sicher als Umgebungsvariable in Vercel gespeichert ist und niemals im Frontend preisgegeben wird.
+
+**2. Frontend-Implementierung & Debugging-Prozess:**
+- **Login-UI (`LoginView.vue`):** Eine einfache Benutzeroberfläche wurde erstellt, um die E-Mail des Benutzers zu erfassen und die Backend-API aufzurufen.
+
+- **Problemstellung:** Nach dem Klick auf den Magic Link landeten die Benutzer zwar auf der `/login`-Seite, wurden aber nicht automatisch in die App eingeloggt und zur Hauptansicht weitergeleitet.
+
+- **Debugging Schritt 1: Race Condition identifiziert:**
+    - Der ursprüngliche Ansatz, die `onAuthStateChange`-Logik sowohl in der globalen `App.vue` als auch lokal in der `LoginView.vue` zu platzieren, führte zu einer "Race Condition" – einem Konflikt, bei dem beide Komponenten versuchten, die Weiterleitung zu steuern. Dies verursachte unvorhersehbares Verhalten.
+
+- **Debugging Schritt 2: Zentralisierung der Auth-Logik:**
+    - **Lösung:** Die gesamte Logik zur Überwachung des Authentifizierungsstatus und zur Steuerung von Weiterleitungen wurde in der Wurzelkomponente `App.vue` zentralisiert. Dies stellt ein sauberes und robustes Architekturmuster dar.
+    - Der `authStore` (Pinia) lauscht nun global auf das `onAuthStateChange`-Event von Supabase.
+    - `App.vue` beobachtet den Benutzerstatus aus dem `authStore`. Wenn ein Benutzer sich authentifiziert (während er auf `/login` ist), leitet `App.vue` ihn zuverlässig zur Hauptseite (`/`) weiter. Die redundante Logik in `LoginView.vue` wurde entfernt.
+
+- **Debugging Schritt 3: Supabase-Konfiguration korrigiert:**
+    - **Finale Blockade:** Trotz des korrekten Codes schlug die Weiterleitung weiterhin fehl.
+    - **Ursachenanalyse:** Die Überprüfung der Supabase-Projekteinstellungen zeigte, dass die `Redirect URLs`-Whitelist leer war.
+    - **Lösung:** Aus Sicherheitsgründen verlangt Supabase, dass jede URL, die in `emailRedirectTo` verwendet wird, explizit in der Whitelist der `Redirect URLs` im Auth-Konfigurationspanel eingetragen sein muss.
+    - **Aktion:** Die URL `https://druid-five.vercel.app/login` wurde zur Whitelist hinzugefügt, was das Problem endgültig löste.
+
+**Finaler Status:** Der Authentifizierungs-Flow ist nun sicher, robust und bietet eine nahtlose Benutzererfahrung.

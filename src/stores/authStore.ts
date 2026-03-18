@@ -1,76 +1,52 @@
 import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue';
+import { supabase } from '../lib/supabaseClient'; // Import our centralized Supabase client
+import type { User } from '@supabase/supabase-js';
 
-// Definiert den Store für die Authentifizierung
+// Define the store for authentication
 export const useAuthStore = defineStore('auth', () => {
-  // State: Speichert den aktuellen Benutzer. Null, wenn nicht eingeloggt.
-  const user = ref(JSON.parse(localStorage.getItem('user') || 'null'));
-  const loading = ref(false);
-  const error = ref<string | null>(null);
-
-  // Speichert den Benutzer im LocalStorage, wenn er sich ändert.
-  watch(user, (newUser) => {
-    if (newUser) {
-      localStorage.setItem('user', JSON.stringify(newUser));
-    } else {
-      localStorage.removeItem('user');
-    }
-  });
+  // State: holds the current user. Null if not logged in.
+  const user = ref<User | null>(null);
+  const loading = ref(true); // Start with loading true until the session is checked.
 
   /**
-   * Holt den aktuellen Benutzer vom Backend.
-   * Nützlich, um die Session bei einem Neuladen der Seite zu überprüfen.
+   * Sets up the listener for Supabase authentication state changes.
+   * This is the core of our authentication system.
    */
-  async function fetchUser() {
-    loading.value = true;
-    error.value = null;
-    try {
-      const { data } = await axios.get('/api/auth/user');
-      user.value = data;
-    } catch (e) {
-      user.value = null; // Wenn der API-Call fehlschlägt, ist der Benutzer nicht eingeloggt
-    }
-    loading.value = false;
-  }
+  const initializeAuthListener = () => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth Event:', event);
+      const currentUser = session?.user || null;
+      user.value = currentUser;
+      
+      // Important: Stop loading only after the initial session check is complete.
+      // The INITIAL_SESSION event is the one we wait for on page load.
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        loading.value = false;
+      }
+    });
+  };
 
   /**
-   * Meldet den Benutzer mit E-Mail und Passwort an, indem der Backend-Endpunkt aufgerufen wird.
-   */
-  async function signInWithPassword(email: string, password: string) {
-    loading.value = true;
-    error.value = null;
-    try {
-      const { data } = await axios.post('/api/auth/signin', { email, password });
-      user.value = data.user;
-    } catch (e: any) {
-      error.value = e.response?.data?.message || 'Anmeldung fehlgeschlagen.';
-      user.value = null;
-    }
-    loading.value = false;
-  }
-
-  /**
-   * Meldet den Benutzer ab, indem der Backend-Endpunkt aufgerufen wird.
+   * Logs the user out by calling Supabase.
+   * The onAuthStateChange listener will automatically handle setting the user to null.
    */
   async function signOut() {
     loading.value = true;
-    error.value = null;
-    try {
-      await axios.post('/api/auth/signout');
-      user.value = null;
-    } catch (e: any) {
-      error.value = e.response?.data?.message || 'Abmeldung fehlgeschlagen.';
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error.message);
     }
+    // No need to set user.value to null here, the listener will do it.
     loading.value = false;
   }
+
+  // When the store is first used, immediately set up the listener.
+  initializeAuthListener();
 
   return {
     user,
     loading,
-    error,
-    fetchUser,
-    signInWithPassword,
     signOut,
   };
 });
